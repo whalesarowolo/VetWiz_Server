@@ -1,0 +1,33 @@
+import mongoose from 'mongoose';
+import { IUser, IUserModel } from './user.interface';
+import { UserSchema } from './user.model';
+import {hash, compare} from 'bcrypt';
+
+
+UserSchema.pre<IUser>("save", function(next) {
+  if (!this.isModified("password")) {
+    return next()
+  }
+  hash(this.password, 9, (err, hash) => {
+    if (err) {
+      return next(err)
+    }
+    this.password = hash
+    next()
+  })
+})
+
+UserSchema.methods.checkPassword = function(password: string) {
+  const passwordHash = this.password
+  return new Promise((resolve, reject) => {
+    compare(password, passwordHash, (err: Error, same: boolean): void => {
+      if (err) {
+         reject(err)
+      }
+      resolve(same)
+    })
+  })
+}
+
+const userModel: IUserModel = mongoose.model<IUser, IUserModel>('user', UserSchema)
+export default userModel;
