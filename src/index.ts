@@ -4,7 +4,15 @@ import { json, urlencoded } from "body-parser";
 import cors from "cors";
 import route from './routes/routesApi';
 import "dotenv/config";
+import {IUser} from './models/user/user'
 
+declare global {
+  namespace Express {
+    interface Request {
+      userData?: IUser
+    }
+  }
+}
 
 mongoose.connect(
   process.env.MONGODB_URI!, 
