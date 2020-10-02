@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUser, IUserModel } from './../models/user/user.interface';
+import { IUser } from '../models/user/user.d';
 import userModel from '../models/user/user';
 import { newToken } from './../utils/auth';
 
@@ -50,7 +50,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const {
       email,
@@ -94,6 +94,9 @@ const loginUser = async (req: Request, res: Response, next: NextFunction): Promi
     }
    
   } catch (error) {
-    
+    return next({
+      message: "Login failed",
+      error: error,
+    })
   }
 }

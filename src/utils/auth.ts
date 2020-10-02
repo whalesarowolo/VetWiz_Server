@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import { Request, Response, NextFunction } from 'express'
-import { IUser } from './../models/user/user.interface';
+import { IUser } from '../models/user/user';
+import { IAuth } from './auth.d';
 
 export const newToken = (user: IUser): string =>
   jwt.sign(
@@ -25,7 +26,7 @@ export const verifyToken = (token: string): Promise<IUser> =>
     })
   })
 
-export const auth = async (req: Request & {userData?: IUser}, res: Response, next: NextFunction): Promise<Response | void> => {
+export const auth = async (req: IAuth, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const token = req.headers.authorization
       ? req.headers.authorization.split(" ")[1]

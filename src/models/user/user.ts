@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser, IUserModel } from './user.interface';
+import { IUser, IUserModel } from './user.d';
 import { UserSchema } from './user.model';
 import {hash, compare} from 'bcrypt';
 
