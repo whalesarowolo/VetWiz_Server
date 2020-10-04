@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import { Request, Response, NextFunction } from 'express'
-import { IUser } from '../models/user/user';
+import { IUser } from '../models/user/user.d';
 import { IAuth } from './auth.d';
 
 export const newToken = (user: IUser): string =>
