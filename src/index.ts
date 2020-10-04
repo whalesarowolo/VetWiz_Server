@@ -4,7 +4,7 @@ import { json, urlencoded } from "body-parser";
 import cors from "cors";
 import route from './routes/routesApi';
 import "dotenv/config";
-import {IUser} from './models/user/user'
+import {IUser} from './models/user/user.d'
 
 declare global {
   namespace Express {
@@ -19,6 +19,7 @@ mongoose.connect(
   {
     useCreateIndex: true,
     useNewUrlParser: true,
+    useUnifiedTopology: true,
   },
 )
 

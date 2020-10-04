@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { IUser } from '../user/user';
+import { IUser } from '../user/user.d';
 
 export interface IWallet extends Document {
   balance: string,

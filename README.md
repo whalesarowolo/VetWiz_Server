@@ -6,3 +6,9 @@
 * Clone the repo
 * Install all packages using _npm i_ or _npm install_
 
+### Routes
+##### User Routes
+* User Registration: _{baseUrl}/api/v1/register_
+* User Login: _{baseUrl}/api/v1/login_
+
+##### Topup Routes
