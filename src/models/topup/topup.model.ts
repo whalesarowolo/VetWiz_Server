@@ -5,9 +5,9 @@ export const TopUpSchema: Schema = new Schema({
     type: String,
     required: true
   },
-  userId: {
-    type: String,
-    required: true
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'user'
   },
   topUpAmount: {
     type: String
@@ -21,10 +21,6 @@ export const TopUpSchema: Schema = new Schema({
     type: Number,
     default: 0
   },
-  userEmail: {
-    type: String,
-    required: true
-  },
   topUpStatus: {
     type: String,
     enum: ["pending", "successful", "failed"],
@@ -33,8 +29,4 @@ export const TopUpSchema: Schema = new Schema({
   reason: {
     type: String
   },
-  date: {
-    type: Date,
-    default: Date.now
-  }
 }, { timestamps: true })

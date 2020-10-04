@@ -6,10 +6,10 @@ export interface ISms extends Document {
   sender: string,
   receiver: string[],
   message: string,
-  crop: string[],
-  location: string,
-  state: string,
-  lga: string,
+  crop?: string[],
+  location?: string,
+  state?: string,
+  lga?: string,
   user: IUser['_id'],
   wallet: IWallet['_id']
 }
