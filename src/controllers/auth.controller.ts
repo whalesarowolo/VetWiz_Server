@@ -41,7 +41,6 @@ export const createUser = async (
         lname: lastName,
         gender,
       })
-      .lean();
     const token = newToken(newUser);
     const { password: p, ...rest } = newUser;
     return res.status(201).json({
