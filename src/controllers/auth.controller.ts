@@ -17,7 +17,7 @@ export const createUser = async (
       firstName,
       lastName,
       gender,
-    }: IUser = req.body;
+    } = req.body;
     let user = null;
     user = await userModel.findOne({ phoneNumber }).lean().exec();
     if (user) {
@@ -36,8 +36,9 @@ export const createUser = async (
       phoneNumber,
       password,
       userRole: occupation,
-      firstName,
-      lastName,
+      fname: firstName,
+      lname: lastName,
+      gender
     });
     const token = newToken(newUser);
     const { password: p, ...rest } = newUser;
