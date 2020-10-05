@@ -25,7 +25,6 @@ export interface IUser extends Document {
   farmLocation?: string;
   farmerCooperative?: string;
   active?: boolean;
-  _id?: string;
 }
 
 export interface IUserModel extends Model<IUser> {
