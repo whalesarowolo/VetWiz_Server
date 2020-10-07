@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import forumModel from './../models/forum/forum';
 import { IForum } from './../models/forum/forum.d';
-import { IUser } from './../models/user/user.d';
 import userModel from '../models/user/user';
+import { IAuthModel } from './../utils/auth.d';
 
 export const addForumPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { postTitle, postDescription, postType, postPic, postCategory }: IForum = req.body
-    const { _id }: IUser['_id'] = req.userData
+    const { userId }: IAuthModel = req.userData!
     if ((postType === "news") || (postType === "adverts")) {
-      const author = await userModel.findOne({ _id }).lean().exec()
+      const author = await userModel.findOne({ userId }).lean().exec()
       if (author) {
         const { userRole } = author
         if (userRole.includes('admin')) {
@@ -19,7 +19,7 @@ export const addForumPost = async (req: Request, res: Response, next: NextFuncti
             postType,
             postCategory: postCategory && postCategory,
             postPic: postPic && postPic,
-            postAuthor: _id
+            postAuthor: userId
           })
           if (newPost) {
             res.status(200).json({
@@ -49,7 +49,7 @@ export const addForumPost = async (req: Request, res: Response, next: NextFuncti
         postType,
         postCategory: postCategory && postCategory,
         postPic: postPic && postPic,
-        postAuthor: _id
+        postAuthor: userId
       })
       if (newPost) {
         res.status(200).json({
