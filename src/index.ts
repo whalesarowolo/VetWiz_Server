@@ -1,21 +1,31 @@
-import express, { Application, Request, Response, NextFunction} from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { json, urlencoded } from "body-parser";
 import cors from "cors";
 import route from './routes/routesApi';
 import "dotenv/config";
-import {IUser} from './models/user/user.d'
+import { IUserModel } from './models/user/user.d'
+import { IAuthModel } from './utils/auth.d';
 
 declare global {
   namespace Express {
     interface Request {
-      userData?: IUser
+      userData?: IAuthModel
     }
   }
+
+  namespace NodeJS {
+    interface ProcessEnv {
+      MONGODB_URI: string,
+      PAYSTACK_SK: string,
+      JWT_SECRET: string
+    }
+  }
+
 }
 
 mongoose.connect(
-  process.env.MONGODB_URI!, 
+  process.env.MONGODB_URI!,
   {
     useCreateIndex: true,
     useNewUrlParser: true,
@@ -52,7 +62,7 @@ app.use("/api/v1", route)
 
 
 // eslint-disable-next-line import/no-unresolved
-require("./utils/modelCreator")
+// require("./utils/modelCreator")
 
 const PORT = process.env.PORT || 8000
 // eslint-disable-next-line no-console

@@ -1,6 +1,5 @@
 import express from 'express';
 import { auth } from './../utils/auth';
-import { IAuth } from './../utils/auth.d';
 import {
   createUser,
   loginUser
