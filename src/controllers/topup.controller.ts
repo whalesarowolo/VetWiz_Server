@@ -60,7 +60,6 @@ export const topUpUser = async (req: Request, res: Response, next: NextFunction)
                 .json({ authorization_url, message: "continue" });
             }
           } catch (error) {
-            console.log(error)
             next({
               message: "Error saving payment to Database",
               error,
