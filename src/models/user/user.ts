@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, {Model} from "mongoose";
 import { IUser, IUserModel } from "./user.d";
 import { UserSchema } from "./user.model";
 import { hash, compare } from "bcrypt";
 
-UserSchema.pre<IUser>("save", function (next) {
+UserSchema.pre<IUserModel>("save", function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -28,5 +28,8 @@ UserSchema.methods.checkPassword = function (password: string) {
   });
 };
 
-const userModel = mongoose.model<IUser, IUserModel>("user", UserSchema);
+const userModel: Model<IUserModel> = mongoose.model<IUserModel>(
+  "user",
+  UserSchema
+);
 export default userModel;

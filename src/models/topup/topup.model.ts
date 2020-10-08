@@ -1,9 +1,8 @@
 import { Schema } from 'mongoose';
 
 export const TopUpSchema: Schema = new Schema({
-  tranferRef: {
+  transferRef: {
     type: String,
-    required: true
   },
   user: {
     type: Schema.Types.ObjectId,

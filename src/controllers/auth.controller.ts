@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { IUser } from "../models/user/user.d";
+import { IUser, IUserModel } from "../models/user/user.d";
 import userModel from "../models/user/user";
 import { newToken } from "./../utils/auth";
+import walletModel from './../models/wallet/wallet';
 
 export const createUser = async (
   req: Request,
@@ -31,23 +32,36 @@ export const createUser = async (
         message: `${email} already exists`,
       });
     }
-    const newUser = await userModel
-      .create({
-        email,
-        phoneNumber,
-        password,
-        userRole: occupation,
-        fname: firstName,
-        lname: lastName,
-        gender,
+    const newUser = await userModel.create({
+      email,
+      phoneNumber,
+      password,
+      userRole: occupation,
+      fname: firstName,
+      lname: lastName,
+      gender
+    })
+    if (newUser) {
+      const newWallet = await walletModel.create({
+        balance: String(Number('100') * 100),
+        user: newUser._id
       })
-    const token = newToken(newUser);
-    const { password: p, ...rest } = newUser;
-    return res.status(201).json({
-      message: "Created  successfully",
-      token,
-      data: rest,
-    });
+      const token = newToken(newUser);
+      const val = newUser.toObject()
+      if (val) {
+        const { password: p, ...rest } = val;
+        return res.status(201).json({
+          message: "Created  successfully",
+          token,
+          data: {
+            ...rest,
+            wallet: newWallet.toObject()
+          },
+
+        });
+      }
+
+    }
   } catch (err) {
     return next({
       message: "Registration failed",
@@ -63,7 +77,7 @@ export const loginUser = async (
 ): Promise<void> => {
   try {
     const { email, phoneNumber, password }: IUser = req.body;
-    let user: IUser | null = null;
+    let user: IUserModel | null = null;
     if (email) {
       user = await userModel.findOne({ email });
     } else if (phoneNumber && phoneNumber.length > 9) {
@@ -71,15 +85,14 @@ export const loginUser = async (
         .findOne({
           phone: { $regex: phoneNumber, $options: "i" },
         })
-        .lean();
     }
     if (!user) {
       res.status(401).json({
         message: "Invalid credentials",
       });
     }
-    if (user?.password) {
-      const match = await userModel.checkPassword(password);
+    if (user) {
+      const match = await user.checkPassword(password!);
       if (!match) {
         res.status(401).json({
           message: "Invalid credentials",
