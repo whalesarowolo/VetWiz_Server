@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { IUser, IUserModel } from "../models/user/user.d";
 import userModel from "../models/user/user";
 import { newToken } from "./../utils/auth";
+import walletModel from './../models/wallet/wallet';
 
 export const createUser = async (
   req: Request,
@@ -41,6 +42,10 @@ export const createUser = async (
       gender
     })
     if (newUser) {
+      const newWallet = await walletModel.create({
+        balance: String(Number('100') * 100),
+        user: newUser._id
+      })
       const token = newToken(newUser);
       const val = newUser.toObject()
       if (val) {
@@ -48,7 +53,11 @@ export const createUser = async (
         return res.status(201).json({
           message: "Created  successfully",
           token,
-          data: rest,
+          data: {
+            ...rest,
+            wallet: newWallet.toObject()
+          },
+
         });
       }
 
