@@ -84,7 +84,7 @@ export const loginUser = async (
       user = await userModel
         .findOne({
           phone: { $regex: phoneNumber, $options: "i" },
-        })
+        }).lean().exec()
     }
     if (!user) {
       res.status(401).json({
