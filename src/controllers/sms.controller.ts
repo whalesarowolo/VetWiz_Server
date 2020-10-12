@@ -67,7 +67,8 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
           location,
           state,
           lga,
-          wallet: wallet._id
+          wallet: wallet._id,
+          user: userId
         })
         if (newMessage) {
           res.status(201).json({
