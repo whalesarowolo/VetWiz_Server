@@ -7,7 +7,6 @@ export const SmsSchema: Schema = new Schema({
   },
   receiver: {
     type: [String],
-    required: true,
   },
   message: {
     type: String,
@@ -18,7 +17,7 @@ export const SmsSchema: Schema = new Schema({
     type: [String]
   },
   location: {
-    type: String
+    type: [String]
   },
   state: {
     type: String

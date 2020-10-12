@@ -7,7 +7,7 @@ export interface ISms extends Document {
   receiver?: string[],
   message?: string,
   crop?: string[],
-  location?: string,
+  location?: string[],
   state?: string,
   lga?: string,
   user?: IUser['_id'],
