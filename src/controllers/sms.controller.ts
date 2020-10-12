@@ -98,7 +98,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
 export const getUserMessageHistory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { userId } = req.userData!
-    const allMessages = smsModel.find({ user: userId }).lean().exec()
+    const allMessages = await smsModel.find({ user: userId }).lean().exec()
     if (allMessages) {
       res.status(200).json({
         message: "sucessful fetching messages",
