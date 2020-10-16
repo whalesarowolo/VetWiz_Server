@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken"
 import { Request, Response, NextFunction } from 'express'
-import { IUser } from '../models/user/user.d';
-import { IAuth } from './auth.d';
+import { IUserModel } from '../models/user/user.d';
+import { IAuthModel } from './auth.d';
 
-export const newToken = (user: IUser): string =>
+export const newToken = (user: IUserModel): string =>
   jwt.sign(
     {
       email: user.email,
@@ -11,22 +11,24 @@ export const newToken = (user: IUser): string =>
       userRole: user.userRole,
       active: user.active,
       userId: user._id,
+      fname: user.fname,
+      lname: user.lname
     },
-    process.env.JWT_SECRET!,
+    process.env.JWT_SECRET,
     {
       expiresIn: "7d",
     }
   )
 
-export const verifyToken = (token: string): Promise<IUser> =>
+export const verifyToken = (token: string): Promise<IAuthModel> =>
   new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.JWT_SECRET!, (error, payload) => {
+    jwt.verify(token, process.env.JWT_SECRET, (error, payload) => {
       if (error) return reject(error)
-      resolve(payload as IUser)
+      resolve(payload as IAuthModel)
     })
   })
 
-export const auth = async (req: IAuth, res: Response, next: NextFunction): Promise<Response | void> => {
+export const auth = async (req: IAuthModel, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const token = req.headers.authorization
       ? req.headers.authorization.split(" ")[1]

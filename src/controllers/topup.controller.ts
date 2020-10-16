@@ -1,16 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { ITopUp } from '../models/topup/topup.d';
 import topUpModel from './../models/topup/topup';
-import { IUser } from './../models/user/user.d';
 import { initializePaystack, verifyPaystack } from './../services/paymentServices/paystack';
 import walletModel from './../models/wallet/wallet';
 import { IWallet } from './../models/wallet/wallet.d';
+import { IAuthModel } from './../utils/auth.d';
 
 
 
 export const topUpUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { _id, email, phoneNumber, fname, lname }: IUser = req.userData!
+    const { userId, email, phoneNumber, fname, lname }: IAuthModel =  req.userData!
     const { topUpAmount, reason }: {
       topUpAmount: string,
       reason: string
@@ -30,7 +30,7 @@ export const topUpUser = async (req: Request, res: Response, next: NextFunction)
             {
               display_name: "User Id",
               variable_name: "userId",
-              value: _id,
+              value: userId,
             },
             {
               display_name: "User Phone",
@@ -48,13 +48,12 @@ export const topUpUser = async (req: Request, res: Response, next: NextFunction)
       async (authorization_url, reference): Promise<void> => {
         if (authorization_url) {
           try {
-            const newTopup: ITopUp = await topUpModel.create({
+            const newTopup = await topUpModel.create({
               topUpAmount: newAmount,
               transferRef: reference,
-              user: _id,
+              user: userId,
               topUpStatus: "pending",
             });
-
             if (newTopup) {
               res
                 .status(200)

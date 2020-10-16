@@ -1,15 +1,15 @@
 import { Document } from 'mongoose';
-import { IUser } from '../user/user';
-import { IWallet } from '../wallet/wallet';
+import { IUser } from '../user/user.d';
+import { IWallet } from '../wallet/wallet.d';
 
 export interface ISms extends Document {
-  sender: string,
-  receiver: string[],
-  message: string,
+  sender?: string,
+  receiver?: string[],
+  message?: string,
   crop?: string[],
-  location?: string,
+  location?: string[],
   state?: string,
   lga?: string,
-  user: IUser['_id'],
-  wallet: IWallet['_id']
+  user?: IUser['_id'],
+  wallet?: IWallet['_id']
 }
