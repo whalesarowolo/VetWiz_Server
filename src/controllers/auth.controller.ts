@@ -31,16 +31,15 @@ export const createUser = async (
         message: `${email} already exists`,
       });
     }
-    const newUser = await userModel
-      .create({
-        email,
-        phoneNumber,
-        password,
-        userRole: occupation,
-        fname: firstName,
-        lname: lastName,
-        gender,
-      })
+    const newUser = await userModel.create({
+      email,
+      phoneNumber,
+      password,
+      userRole: occupation,
+      fname: firstName,
+      lname: lastName,
+      gender,
+    });
     const token = newToken(newUser);
     const { password: p, ...rest } = newUser;
     return res.status(201).json({
