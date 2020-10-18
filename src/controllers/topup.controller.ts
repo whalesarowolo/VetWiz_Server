@@ -1,30 +1,47 @@
-import { Request, Response, NextFunction } from 'express';
-import { ITopUp } from '../models/topup/topup.d';
-import topUpModel from './../models/topup/topup';
-import { initializePaystack, verifyPaystack } from './../services/paymentServices/paystack';
-import walletModel from './../models/wallet/wallet';
-import { IWallet } from './../models/wallet/wallet.d';
-import { IAuthModel } from './../utils/auth.d';
+import { Request, Response, NextFunction } from "express";
+import { ITopUp } from "../models/topup/topup.d";
+import topUpModel from "./../models/topup/topup";
+import {
+  initializePaystack,
+  verifyPaystack,
+} from "./../services/paymentServices/paystack";
+import walletModel from "./../models/wallet/wallet";
+import { IWallet } from "./../models/wallet/wallet.d";
+import { IAuthModel } from "./../utils/auth.d";
+import { generateTxRef } from "../utils/helpers";
 
-
-
-export const topUpUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const topUpUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const { userId, email, phoneNumber, fname, lname }: IAuthModel =  req.userData!
-    const { topUpAmount, reason }: {
-      topUpAmount: string,
-      reason: string
-    } = req.body
+    const {
+      userId,
+      email,
+      phoneNumber,
+      fname,
+      lname,
+    }: IAuthModel = req.userData!;
+    const {
+      topUpAmount,
+      reason,
+    }: {
+      topUpAmount: string;
+      reason: string;
+    } = req.body;
 
-    let amount = Number(topUpAmount) * 100
-    let newAmount = String(amount)
+    let amount = Number(topUpAmount) * 100;
+    let newAmount = String(amount);
+    const reference = generateTxRef(24);
 
-    const fullname = [fname, lname].join(" ")
+    const fullname = [fname, lname].join(" ");
     initializePaystack(
       {
         email: email,
         amount: newAmount,
-        callback_url: "https://www.farmaid.net/complete_topup_transaction.html",
+        reference,
+        callback_url: `${process.env.BASE_URL}/api/v1/topup/verify/${reference}`,
         metadata: {
           custom_fields: [
             {
@@ -39,25 +56,23 @@ export const topUpUser = async (req: Request, res: Response, next: NextFunction)
             },
             {
               display_name: "Name",
-              variable_name: "fname",
+              variable_name: "name",
               value: fullname,
             },
-          ]
-        }
+          ],
+        },
       },
       async (authorization_url, reference): Promise<void> => {
         if (authorization_url) {
           try {
             const newTopup = await topUpModel.create({
-              topUpAmount: newAmount,
-              transferRef: reference,
+              topUpAmount: topUpAmount,
+              transactionRef: reference,
               user: userId,
               topUpStatus: "pending",
             });
             if (newTopup) {
-              res
-                .status(200)
-                .json({ authorization_url, message: "continue" });
+              res.status(200).json({ authorization_url, message: "continue" });
             }
           } catch (error) {
             next({
@@ -68,25 +83,28 @@ export const topUpUser = async (req: Request, res: Response, next: NextFunction)
         } else {
           next({
             message: "Topup processing failed",
-          })
+          });
         }
       },
       (): void => {
         res.status(500).send({
-          message: "There seems to be an error"
-        })
+          message: "There seems to be an error in payment",
+        });
       }
-    )
-
+    );
   } catch (error) {
     next({
       message: "Topup Failed",
-      err: error
-    })
+      err: error,
+    });
   }
-}
+};
 
-export const topUpVerify = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const topUpVerify = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { reference } = req.params;
     verifyPaystack(
@@ -94,60 +112,64 @@ export const topUpVerify = async (req: Request, res: Response, next: NextFunctio
       async (status): Promise<void> => {
         if (status === "success") {
           try {
-            const verifiedPayment: ITopUp | null = await topUpModel.findOneAndUpdate(
-              {
-                transferRef: reference,
-                topUpStatus: "pending",
-              },
-              {
-                $set: {
-                  topUpStatus: "successful",
+            const verifiedPayment: ITopUp | null = await topUpModel
+              .findOneAndUpdate(
+                {
+                  transactionRef: reference,
+                  topUpStatus: "pending",
                 },
-              },
-              { new: true }
-            ).lean();
+                {
+                  $set: {
+                    topUpStatus: "successful",
+                  },
+                },
+                { new: true }
+              )
+              .lean();
 
             if (verifiedPayment) {
-              const presentWallet: IWallet | null = await walletModel.findOne({
-                user: verifiedPayment.user,
-              }).lean();
+              const presentWallet: IWallet | null = await walletModel
+                .findOne({
+                  user: verifiedPayment.user,
+                })
+                .lean();
               if (presentWallet) {
-                const updatedWallet: IWallet | null = await walletModel.findOneAndUpdate(
-                  {
-                    user: verifiedPayment.user,
-                  },
-                  {
-                    $set: {
-                      balance:
-                        String(Number(presentWallet.balance) + Number(verifiedPayment.topUpAmount)),
+                const updatedWallet: IWallet | null = await walletModel
+                  .findOneAndUpdate(
+                    {
+                      user: verifiedPayment.user,
                     },
-                  },
-                  {
-                    new: true,
-                    upsert: true,
-                    rawResult: true,
-                  }
-                ).lean();
+                    {
+                      $set: {
+                        balance: String(
+                          Number(presentWallet.balance) +
+                            Number(verifiedPayment.topUpAmount)
+                        ),
+                      },
+                    },
+                    {
+                      new: true,
+                      upsert: true,
+                      rawResult: true,
+                    }
+                  )
+                  .lean();
                 if (updatedWallet) {
-                  res.status(200).json({
-                    message: "Payment successfully to user wallet",
-                    walletBalance: updatedWallet.balance,
-                    topupAmount: verifiedPayment.topUpAmount,
-                  });
+                  res.redirect(
+                    "https://www.farmaid.net/complete_topup_transaction.html"
+                  );
                 }
               } else {
                 // Create a wallet and update the balance
                 try {
                   const newWallet: IWallet = await walletModel.create({
                     user: verifiedPayment.user,
-                    balance: verifiedPayment.topUpAmount!
+                    balance: verifiedPayment.topUpAmount!,
                   });
                   if (newWallet) {
-                    res.status(200).json({
-                      message: "Payment successfully added to new wallet",
-                      walletBalance: newWallet.balance,
-                      topupAmount: verifiedPayment.topUpAmount,
-                    });
+                    res.redirect(
+                      "https://www.farmaid.net/complete_topup_transaction.html"
+                    );
                   }
                 } catch (error) {
                   next({
@@ -160,13 +182,13 @@ export const topUpVerify = async (req: Request, res: Response, next: NextFunctio
             } else {
               // Payment not verified
               next({
-                message: "There was a problem"
-              })
+                message: "There was a problem verifying payment",
+              });
             }
           } catch (error) {
             //There was a problem
             next({
-              message: error
+              message: error,
             });
           }
         } else {
@@ -175,14 +197,13 @@ export const topUpVerify = async (req: Request, res: Response, next: NextFunctio
       },
       (): void => {
         res.status(500).send({
-          message: "There seems to be an error"
-        })
+          message: "There seems to be an error",
+        });
       }
-      )
-      
+    );
   } catch (error) {
     next({
-      message: "Error verifying payment"
-    })
-}
-}
+      message: "Error verifying payment",
+    });
+  }
+};

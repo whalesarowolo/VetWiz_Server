@@ -43,7 +43,7 @@ export const createUser = async (
     });
     if (newUser) {
       const newWallet = await walletModel.create({
-        balance: String(Number("100") * 100),
+        balance: String(5 * 100),
         user: newUser._id,
       });
       const token = newToken(newUser);
