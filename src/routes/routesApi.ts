@@ -5,6 +5,7 @@ import { topUpUser, topUpVerify } from "./../controllers/topup.controller";
 import {
   sendMessage,
   getUserMessageHistory,
+  filterSMSRecipients,
 } from "./../controllers/sms.controller";
 import {
   addForumPost,
@@ -29,6 +30,7 @@ router.get("/topup/verify/:reference", topUpVerify);
 //SMS route
 router.post("/sms/send", <any>auth, sendMessage);
 router.get("/sms/history", <any>auth, getUserMessageHistory);
+router.post("/sms/filter-recipients", <any>auth, filterSMSRecipients);
 
 //Forum Routes
 router.post("/forum/add", <any>auth, addForumPost);
