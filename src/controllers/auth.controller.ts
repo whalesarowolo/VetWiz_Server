@@ -80,7 +80,7 @@ export const loginUser = async (
       user = await userModel.findOne({ email });
     } else if (phoneNumber && phoneNumber.length > 9) {
       user = await userModel.findOne({
-        phone: { $regex: phoneNumber, $options: "i" },
+        phoneNumber: { $regex: phoneNumber, $options: "i" },
       });
     }
     if (!user) {

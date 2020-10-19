@@ -7,7 +7,7 @@ export const newToken = (user: IUserModel): string =>
   jwt.sign(
     {
       email: user.email,
-      phone: user.phoneNumber,
+      phoneNumber: user.phoneNumber,
       userRole: user.userRole,
       active: user.active,
       userId: user._id,

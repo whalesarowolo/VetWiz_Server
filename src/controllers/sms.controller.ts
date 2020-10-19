@@ -6,6 +6,7 @@ import { IAuthModel } from "./../utils/auth.d";
 import https from "https";
 import { IUserModel } from "../models/user/user.d";
 import userModel from "./../models/user/user";
+import { SMS_CHARGE } from "../utils/helpers";
 
 export const filterSMSRecipients = async (
   req: Request,
@@ -20,19 +21,23 @@ export const filterSMSRecipients = async (
       crops: [string];
       location: [string];
     } = req.body;
-    
+
     const filteredUsersCount = await userModel
       .find({
         $and: [
-          { crops: { $all: crops.map((crop) => crop.toLowerCase()) } },
+          ...crops.map((crop) => ({
+            crops: { $regex: crop, $options: "i" },
+          })),
+
           {
             $or: location.map((eachLocation) => ({
-              farmLocation: eachLocation.toLowerCase(),
+              state: { $regex: eachLocation, $options: "i" },
             })),
           },
         ],
       })
       .count();
+    console.log(filteredUsersCount);
     res.status(200).json({ filteredUsersCount });
   } catch (error) {
     return next({
@@ -48,29 +53,36 @@ export const sendMessage = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { userId }: IAuthModel | undefined = req.userData!;
+    const { userId }: IAuthModel = req.userData!;
     const {
-      sender,
       message,
-      crop,
+      crops,
       location,
-      state,
-      lga,
+      selectedReach,
     }: {
-      sender: ISms["sender"];
-      message: ISms["message"];
-      crop: ISms["crop"];
-      location: ISms["location"];
-      state: ISms["state"];
-      lga: ISms["lga"];
+      message: string;
+      crops: [string];
+      location: [string];
+      selectedReach: string;
     } = req.body;
 
-    const receiver = await userModel
-      .find({}, { phoneNumber: 1, _id: 0 })
-      .limit(19)
-      .lean()
-      .exec();
-    const cost: number = receiver!.length * 5;
+    const receivers = await userModel
+      .find(
+        {
+          $and: [
+            { crops: { $all: crops.map((crop) => crop.toLowerCase()) } },
+            {
+              $or: location.map((eachLocation) => ({
+                farmLocation: eachLocation.toLowerCase(),
+              })),
+            },
+          ],
+        },
+        "phoneNumber"
+      )
+      .limit(Number(selectedReach))
+      .lean();
+    const cost: number = receivers.length * SMS_CHARGE;
     const wallet = await walletModel.findOne({ user: userId }).lean();
     if (wallet) {
       const { balance } = wallet;
@@ -81,58 +93,48 @@ export const sendMessage = async (
         });
         return;
       }
-      const allPhones: string[] =
-        receiver && receiver.map((obj) => obj?.phoneNumber!);
-      const phoneNums = Array.isArray(allPhones) && allPhones.join(",");
-      const results = await https.get(
-        "https://smartsmssolutions.com/api/?message=" +
-          message +
-          "&to=" +
-          phoneNums +
-          "&sender_id=Farm+Aid&type=0&routing=4&token=WFFWrxhHdO4HEazCHOHEl1VOTpzovVAG80e3dyCesrmxwoOIO16UqEoO4aSowdfwLCqYkqne2PGNkqNiSkxeQoPlt2So6R50wqAa"
-      );
-      if (results) {
-        const newBalance = Number(balance) - cost;
-        const updateWallet = await walletModel
-          .findOneAndUpdate(
-            {
-              user: userId,
+      const allPhones: string[] = receivers
+        .map((obj) => obj.phoneNumber ?? "")
+        .filter(Boolean);
+      // const phoneNums = allPhones.join(",");
+      // const results = await https.get(
+      //   "https://smartsmssolutions.com/api/?message=" +
+      //     message +
+      //     "&to=" +
+      //     phoneNums +
+      //     "&sender_id=Farm+Aid&type=0&routing=4&token=WFFWrxhHdO4HEazCHOHEl1VOTpzovVAG80e3dyCesrmxwoOIO16UqEoO4aSowdfwLCqYkqne2PGNkqNiSkxeQoPlt2So6R50wqAa"
+      // );
+      const newMessage = await smsModel.create({
+        senderId: userId,
+        receivers: allPhones,
+        message,
+        crops,
+        location,
+      });
+      const newBalance = Number(balance) - cost;
+      await walletModel
+        .findOneAndUpdate(
+          {
+            user: userId,
+          },
+          {
+            $set: {
+              balance: String(newBalance),
             },
-            {
-              $set: {
-                balance: String(newBalance),
-              },
-            },
-            {
-              new: true,
-              upsert: true,
-              rawResult: true,
-            }
-          )
-          .lean()
-          .exec();
-        const newMessage = await smsModel.create({
-          sender,
-          receiver: allPhones,
-          message,
-          crop,
-          location,
-          state,
-          lga,
-          wallet: wallet._id,
-          user: userId,
+          },
+          {
+            new: true,
+            upsert: true,
+            rawResult: true,
+          }
+        )
+        .lean();
+
+      if (newMessage) {
+        res.status(201).json({
+          message: "Message queued up, awaiting approval",
         });
-        if (newMessage) {
-          res.status(201).json({
-            message: "Message sent and created",
-            data: newMessage.toObject(),
-            wallet: updateWallet?.value,
-          });
-          return;
-        }
-        res.status(200).send({
-          message: "Message sent",
-        });
+        return;
       }
     } else {
       res.status(404).send({

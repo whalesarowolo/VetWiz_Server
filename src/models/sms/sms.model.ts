@@ -1,38 +1,51 @@
-import { Schema } from 'mongoose';
+import { Schema } from "mongoose";
 
-export const SmsSchema: Schema = new Schema({
-  sender: {
-    type: String,
-    required: true
+export const SmsSchema: Schema = new Schema(
+  {
+    senderId: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+    receivers: {
+      type: [String],
+    },
+    message: {
+      type: String,
+      required: true,
+      default: "",
+    },
+    selectedReach: {
+      type: String,
+      required: true,
+      default: "",
+    },
+    crops: {
+      type: [String],
+    },
+    location: {
+      type: [String],
+    },
+    states: {
+      type: String,
+    },
+    lgas: {
+      type: String,
+    },
+    approverId: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["pending", "approved", "disapproved"],
+      default: "pending",
+    },
+    statusDate: {
+      type: String,
+    },
   },
-  receiver: {
-    type: [String],
-  },
-  message: {
-    type: String,
-    required: true,
-    default: ""
-  },
-  crop: {
-    type: [String]
-  },
-  location: {
-    type: [String]
-  },
-  state: {
-    type: String
-  },
-  lga: {
-    type: String
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "user"
-  },
-  wallet: {
-    type: Schema.Types.ObjectId,
-    ref: "wallet"
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true
-})
+);

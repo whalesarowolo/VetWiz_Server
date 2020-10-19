@@ -1,12 +1,9 @@
-
 const sendSmsHelper = (
   username: string,
   password: string,
   sender: string,
-  recipient: string,
-) => {
-
-}
+  recipient: string
+) => {};
 
 export const generateTxRef = (passwordLength: number): string => {
   let pass = "";
@@ -17,3 +14,5 @@ export const generateTxRef = (passwordLength: number): string => {
     pass += possible.charAt(Math.floor(Math.random() * possible.length));
   return pass;
 };
+
+export const SMS_CHARGE = 5;
