@@ -28,7 +28,7 @@ router.post("/paystack/topup", <any>auth, topUpUser);
 router.get("/topup/verify/:reference", topUpVerify);
 
 //SMS route
-router.post("/sms/send", <any>auth, sendMessage);
+router.post("/sms/send-for-approval", <any>auth, sendMessage);
 router.get("/sms/history", <any>auth, getUserMessageHistory);
 router.post("/sms/filter-recipients", <any>auth, filterSMSRecipients);
 

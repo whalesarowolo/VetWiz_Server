@@ -7,7 +7,9 @@ export interface ISms extends Document {
   receivers?: string[];
   message?: string;
   crops?: string[];
+  cost?: string;
   location?: string[];
   state?: string;
   lga?: string;
+  selectedReach?: string;
 }

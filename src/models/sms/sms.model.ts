@@ -22,6 +22,9 @@ export const SmsSchema: Schema = new Schema(
     crops: {
       type: [String],
     },
+    cost: {
+      type: String,
+    },
     location: {
       type: [String],
     },

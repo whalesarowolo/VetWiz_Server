@@ -22,7 +22,7 @@ export const filterSMSRecipients = async (
       location: [string];
     } = req.body;
 
-    const filteredUsersCount = await userModel
+    const filteredUsers = await userModel
       .find({
         $and: [
           ...crops.map((crop) => ({
@@ -36,9 +36,10 @@ export const filterSMSRecipients = async (
           },
         ],
       })
-      .count();
-    console.log(filteredUsersCount);
-    res.status(200).json({ filteredUsersCount });
+      .lean();
+    res
+      .status(200)
+      .json({ filteredUsersCount: filteredUsers.length, filteredUsers });
   } catch (error) {
     return next({
       message: "Sending Message failed",
@@ -70,10 +71,13 @@ export const sendMessage = async (
       .find(
         {
           $and: [
-            { crops: { $all: crops.map((crop) => crop.toLowerCase()) } },
+            ...crops.map((crop) => ({
+              crops: { $regex: crop, $options: "i" },
+            })),
+
             {
               $or: location.map((eachLocation) => ({
-                farmLocation: eachLocation.toLowerCase(),
+                state: { $regex: eachLocation, $options: "i" },
               })),
             },
           ],
@@ -110,6 +114,10 @@ export const sendMessage = async (
         message,
         crops,
         location,
+        cost: String(
+          Number(selectedReach) * Math.ceil(message.length / 150) * SMS_CHARGE
+        ),
+        selectedReach,
       });
       const newBalance = Number(balance) - cost;
       await walletModel
@@ -156,7 +164,7 @@ export const getUserMessageHistory = async (
 ): Promise<void> => {
   try {
     const { userId } = req.userData!;
-    const allMessages = await smsModel.find({ user: userId }).lean().exec();
+    const allMessages = await smsModel.find({ senderId: userId }).lean();
     if (allMessages) {
       res.status(200).json({
         message: "sucessful fetching messages",
