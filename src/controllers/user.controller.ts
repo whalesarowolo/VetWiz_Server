@@ -15,6 +15,7 @@ export const updateUserDetails = async (
       lat = "",
       long = "",
       userRole = [],
+      crops = [],
     } = req.body;
     const { userId } = req.userData!;
     const newUser = await userModel.findByIdAndUpdate(userId, {
@@ -26,6 +27,7 @@ export const updateUserDetails = async (
         ...(lat && { lat }),
         ...(long && { long }),
         ...(userRole.length > 0 && { userRole }),
+        ...(crops.length > 0 && { crops }),
       },
     });
     res.status(201).json(newUser);
