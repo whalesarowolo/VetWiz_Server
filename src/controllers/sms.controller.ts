@@ -119,7 +119,7 @@ export const sendMessage = async (
         ),
         selectedReach,
       });
-      const newBalance = Number(balance) - cost;
+      const newBalance = Number(balance) - Number(selectedReach) * Math.ceil(message.length / 150) * SMS_CHARGE;
       await walletModel
         .findOneAndUpdate(
           {
