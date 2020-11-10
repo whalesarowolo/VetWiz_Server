@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IAuthModel } from "./../utils/auth.d";
 import userModel from "./../models/user/user";
-import { IUser } from "../models/user/user";
 import articleModel from "../models/article/article";
 
 export const getArticles = async (
@@ -10,21 +9,15 @@ export const getArticles = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const {
-      postTypes,
-    }: {
-      postTypes: [string];
-    } = req.query;
+    const { category, crop } = req.query as any;
     const { userId }: IAuthModel = req.userData!;
-    const { state, userRole }: IUser = await userModel
-      .findById(userId)
-      .catch(() => {
-        res.status(403).json({ message: "User not found" });
-      });
+    const user = await userModel.findById(userId, "-password");
     const filteredArticles = await articleModel
       .find({
         status: "approved",
-        $or: userRole.map((role: string) => ({
+        ...(category && { category }),
+        crop: crop,
+        $or: user?.userRole.map((role: string) => ({
           accessibleRoles: { $regex: role, $options: "i" },
         })),
       })
@@ -49,18 +42,20 @@ export const createArticle = async (
     const {
       topic,
       body,
-      image,
+      images,
       states,
-      lgas,
-      postTypes,
+      category,
+      tags,
+      premium,
       accessibleRoles,
     }: {
       topic: string;
       body: string;
-      image: string;
+      images: [string];
       states: [string];
-      lgas: [string];
-      postTypes: [string];
+      category: string;
+      tags: [string];
+      premium: boolean;
       accessibleRoles: [string];
     } = req.body;
 
@@ -68,11 +63,12 @@ export const createArticle = async (
       .create({
         topic,
         body,
-        image,
+        images,
         states,
-        lgas,
-        status: "pending",
-        postTypes,
+        status: "approved",
+        tags,
+        premium,
+        category,
         accessibleRoles,
         createdBy: userId,
       })
@@ -87,32 +83,6 @@ export const createArticle = async (
     return next({
       message: "Sending Message failed",
       error: error,
-    });
-  }
-};
-
-export const approveArticle = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { userRole } = req.userData!;
-    const isAllowed = userRole.includes("admin");
-    if (!isAllowed) {
-      res.status(403).json({ message: "Only Admins can approve status" });
-    }
-    const { articleId, status } = req.query;
-    const article = articleModel.findByIdAndUpdate(articleId, {
-      $set: {
-        status,
-      },
-    });
-    res.status(201).json({ message: "Updated successfully", data: article });
-  } catch (error) {
-    next({
-      message: "could not fetch message history",
-      err: error,
     });
   }
 };

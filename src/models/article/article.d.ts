@@ -2,15 +2,15 @@ import { Document } from "mongoose";
 import { IUser } from "../user/user.d";
 
 export interface IArticle extends Document {
-  _id?: string;
   topic: string;
   body: string;
-  image?: string;
-  status: string;
+  images?: [string];
+  crop?: string;
+  category: string;
   states?: string[];
-  lgas?: string[];
-  postTypes: string[];
+  status: string;
+  tags: string[];
   accessibleRoles?: string[];
-  approvedBy?: IUser["_id"];
+  premium: boolean;
   createdBy?: IUser["_id"];
 }

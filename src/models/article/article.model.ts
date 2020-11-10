@@ -12,13 +12,10 @@ export const ArticleSchema: Schema = new Schema(
       default: "",
       required: true,
     },
-    image: {
-      type: String,
-      default: "",
-    },
+    images: [String],
     status: {
       type: String,
-      default: "pending",
+      default: "approved",
       enum: ["pending", "approved", "disapproved"],
     },
     states: {
@@ -27,15 +24,11 @@ export const ArticleSchema: Schema = new Schema(
     lgas: {
       type: [String],
     },
-    postTypes: {
+    tags: {
       type: [String],
     },
     accessibleRoles: {
       type: [String],
-    },
-    approvedBy: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
     },
     createdBy: {
       type: Schema.Types.ObjectId,

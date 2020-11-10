@@ -1,4 +1,4 @@
-import mongoose, {Model} from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { IUser, IUserModel } from "./user.d";
 import { UserSchema } from "./user.model";
 import { hash, compare } from "bcrypt";

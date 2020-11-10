@@ -15,6 +15,7 @@ import {
 } from "../controllers/forum.controller";
 import { updateUserDetails } from "../controllers/user.controller";
 import { getWalletBalance } from "../controllers/wallet.controller";
+import { getArticles } from "../controllers/article.controller";
 
 const router = express.Router();
 
@@ -37,6 +38,9 @@ router.post("/forum/add", <any>auth, addForumPost);
 router.get("/forum/get/news", <any>auth, getNewsPosts);
 router.get("/forum/get/ads", <any>auth, getAdvertsPosts);
 router.get("/forum/get/community", <any>auth, getCommunityPosts);
+
+//Articles routes
+router.get("/articles", <any>auth, getArticles);
 
 // Wallet routes
 router.get("/wallet/get", <any>auth, getWalletBalance);
