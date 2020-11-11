@@ -28,8 +28,5 @@ UserSchema.methods.checkPassword = function (password: string) {
   });
 };
 
-const userModel: Model<IUserModel> = mongoose.model<IUserModel>(
-  "user",
-  UserSchema
-);
+const userModel = mongoose.model<IUserModel>("user", UserSchema);
 export default userModel;

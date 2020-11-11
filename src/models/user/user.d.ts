@@ -1,7 +1,6 @@
 import { Document, Model } from "mongoose";
 
-export interface IUser {
-  _id?: string;
+export interface IUser extends Document {
   fname?: string;
   lname?: string;
   email: string;
@@ -28,6 +27,6 @@ export interface IUser {
   active?: boolean;
 }
 
-export interface IUserModel extends IUser, Document {
+export interface IUserModel extends IUser {
   checkPassword(pass): (password: string) => Promise<boolean>;
 }

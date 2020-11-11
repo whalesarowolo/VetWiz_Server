@@ -1,30 +1,32 @@
 import { Schema } from "mongoose";
 
-export const ArticleSchema: Schema = new Schema(
+export const DiseaseSchema: Schema = new Schema(
   {
-    topic: {
+    name: {
       type: String,
       default: "",
       required: true,
     },
-    body: {
+    nameLanguages: [String],
+    animal: {
       type: String,
       default: "",
-      required: true,
+    },
+    crop: {
+      type: String,
+      default: "",
     },
     images: [String],
-    status: {
-      type: String,
-      default: "approved",
-      enum: ["pending", "approved", "disapproved"],
-    },
-    states: {
+    infectionPossibilities: {
       type: [String],
     },
-    tags: {
+    treatment: String,
+    vaccine: String,
+    symptoms: {
       type: [String],
     },
-    accessibleRoles: {
+    emergency: Boolean,
+    keyword: {
       type: [String],
     },
     createdBy: {

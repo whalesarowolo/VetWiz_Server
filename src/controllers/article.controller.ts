@@ -21,7 +21,7 @@ export const getArticles = async (
           accessibleRoles: { $regex: role, $options: "i" },
         })),
       })
-      .select("-approvedBy -createdBy")
+      .select(" -createdBy")
       .lean();
     res.status(200).json(filteredArticles);
   } catch (error) {
