@@ -32,6 +32,38 @@ export const getArticles = async (
   }
 };
 
+export const getNews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { tags } = req.query as any;
+    const { userId }: IAuthModel = req.userData!;
+    const user = await userModel.findById(userId, "-password");
+    const filteredArticles = await articleModel
+      .find({
+        status: "approved",
+        $or: [
+          ...tags.map((tag: string) => ({
+            tags: { $regex: tag, $options: "i" },
+          })),
+          ...(user?.userRole.map((role: string) => ({
+            accessibleRoles: { $regex: role, $options: "i" },
+          })) ?? []),
+        ],
+      })
+      .select(" -createdBy")
+      .lean();
+    res.status(200).json(filteredArticles);
+  } catch (error) {
+    return next({
+      message: "Getting feed failed",
+      error,
+    });
+  }
+};
+
 export const createArticle = async (
   req: Request,
   res: Response,
@@ -46,7 +78,7 @@ export const createArticle = async (
       states,
       category,
       tags,
-      premium,
+      premium = false,
       accessibleRoles,
     }: {
       topic: string;

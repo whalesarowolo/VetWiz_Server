@@ -18,18 +18,22 @@ export const updateUserDetails = async (
       crops = [],
     } = req.body;
     const { userId } = req.userData!;
-    const newUser = await userModel.findByIdAndUpdate(userId, {
-      $set: {
-        ...(company && { company }),
-        ...(dob && { dob }),
-        ...(state && { state }),
-        ...(lga && { lga }),
-        ...(lat && { lat }),
-        ...(long && { long }),
-        ...(userRole.length > 0 && { userRole }),
-        ...(crops.length > 0 && { crops }),
+    const newUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...(company && { company }),
+          ...(dob && { dob }),
+          ...(state && { state }),
+          ...(lga && { lga }),
+          ...(lat && { lat }),
+          ...(long && { long }),
+          ...(userRole.length > 0 && { userRole }),
+          ...(crops.length > 0 && { crops }),
+        },
       },
-    });
+      { new: true, upsert: true, select: "-password" }
+    );
     res.status(201).json(newUser);
   } catch (error) {
     next({
