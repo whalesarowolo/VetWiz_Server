@@ -17,6 +17,7 @@ export const updateUserDetails = async (
       userRole = [],
       crops = [],
     } = req.body;
+    console.log(req.body);
     const { userId } = req.userData!;
     const newUser = await userModel.findByIdAndUpdate(
       userId,

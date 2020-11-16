@@ -15,7 +15,7 @@ import {
 } from "../controllers/forum.controller";
 import { updateUserDetails } from "../controllers/user.controller";
 import { getWalletBalance } from "../controllers/wallet.controller";
-import { getArticles } from "../controllers/article.controller";
+import { getArticles, getNews } from "../controllers/article.controller";
 import { getDiseases } from "../controllers/disease.controller";
 
 const router = express.Router();
@@ -41,6 +41,7 @@ router.get("/forum/get/ads", <any>auth, getAdvertsPosts);
 router.get("/forum/get/community", <any>auth, getCommunityPosts);
 
 //Articles routes
+router.get("/articles/tags", <any>auth, getNews);
 router.get("/articles", <any>auth, getArticles);
 
 //Disease routes

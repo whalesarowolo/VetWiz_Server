@@ -45,9 +45,12 @@ export const getNews = async (
       .find({
         status: "approved",
         $or: [
-          ...tags.map((tag: string) => ({
-            tags: { $regex: tag, $options: "i" },
-          })),
+          ...tags
+            .split(",")
+            .filter(Boolean)
+            .map((tag: string) => ({
+              tags: { $regex: tag, $options: "i" },
+            })),
           ...(user?.userRole.map((role: string) => ({
             accessibleRoles: { $regex: role, $options: "i" },
           })) ?? []),
@@ -55,6 +58,7 @@ export const getNews = async (
       })
       .select(" -createdBy")
       .lean();
+
     res.status(200).json(filteredArticles);
   } catch (error) {
     return next({
