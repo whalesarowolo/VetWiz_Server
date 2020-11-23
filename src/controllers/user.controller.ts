@@ -43,3 +43,25 @@ export const updateUserDetails = async (
     });
   }
 };
+
+// export const createNVRIUsers = async (req: any, res: any) => {
+//   try {
+//     for (const user of users) {
+//       await userModel
+//         .create({
+//           email: user?.email ?? "",
+//           userRole: ["user", "vet"],
+//           password: user?.password ?? "",
+//           phoneNumber: user?.phone ?? "",
+//           createdAt: user.date.$date,
+//           bizCategory: user.role,
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//         });
+//     }
+//     await res.send("Saved");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

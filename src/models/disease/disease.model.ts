@@ -7,7 +7,12 @@ export const DiseaseSchema: Schema = new Schema(
       default: "",
       required: true,
     },
-    nameLanguages: [String],
+    nameLanguages: [
+      {
+        language: String,
+        name: String,
+      },
+    ],
     animal: {
       type: String,
       default: "",

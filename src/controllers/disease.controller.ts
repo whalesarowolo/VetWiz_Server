@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { IAuthModel } from "./../utils/auth.d";
-import userModel from "./../models/user/user";
 import diseaseModel from "../models/disease/disease";
 
 export const getDiseases = async (
@@ -10,7 +9,6 @@ export const getDiseases = async (
 ): Promise<void> => {
   try {
     const { isCrop, isAnimal } = req.query as any;
-    const { userId }: IAuthModel = req.userData!;
     const filteredDiseases = await diseaseModel
       .find({
         ...(isCrop && { crop: { $ne: "" } }),
@@ -47,3 +45,50 @@ export const getSingleDisease = async (
     });
   }
 };
+
+// export const createDiseasesFromJson = async (req: any, res: any) => {
+//   try {
+//     for (const disease of diseases) {
+//       await diseaseModel
+//         .create({
+//           name: disease?.disease ?? "",
+//           nameLanguages: [
+//             { language: "hausa", name: disease?.diseaseHausa ?? "" },
+//             { language: "fulfude", name: disease?.diseaseFulfude ?? "" },
+//           ],
+//           animal: disease.animal,
+//           crop: "",
+//           infectionPossibilities: disease.animalAssocaited,
+//           symptoms: disease?.symptoms ?? [],
+//           treatment: disease?.treatment ?? "",
+//           vaccine: disease?.vaccine ?? "",
+//           prevention: disease?.prevention ?? [],
+//           emergency: disease?.emergency ?? false,
+//           keyword: disease?.keyWord ?? [],
+//           images: [
+//             ...(disease?.diseaseImage1
+//               ? [
+//                   `https://farm-aid-backend.herokuapp.com/${disease.diseaseImage}`,
+//                 ]
+//               : []),
+//             ...(disease?.diseaseImage1
+//               ? [
+//                   `https://farm-aid-backend.herokuapp.com/${disease.diseaseImage1}`,
+//                 ]
+//               : []),
+//             ...(disease?.diseaseImage2
+//               ? [
+//                   `https://farm-aid-backend.herokuapp.com/${disease.diseaseImage2}`,
+//                 ]
+//               : []),
+//           ],
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//         });
+//     }
+//     await res.send("Saved");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

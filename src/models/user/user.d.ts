@@ -3,7 +3,7 @@ import { Document, Model } from "mongoose";
 export interface IUser extends Document {
   fname?: string;
   lname?: string;
-  email: string;
+  email?: string;
   userRole: string[];
   password?: string;
   phoneNumber?: string;
@@ -25,6 +25,7 @@ export interface IUser extends Document {
   farmLocation?: string;
   farmerCooperative?: string;
   active?: boolean;
+  createdAt?: string;
 }
 
 export interface IUserModel extends IUser {

@@ -3,6 +3,7 @@ import { IUser, IUserModel } from "../models/user/user.d";
 import userModel from "../models/user/user";
 import { newToken } from "./../utils/auth";
 import walletModel from "./../models/wallet/wallet";
+import { IAuthModel } from "../utils/auth.d";
 
 export const createUser = async (
   req: Request,
@@ -18,6 +19,7 @@ export const createUser = async (
       firstName,
       lastName,
       gender,
+      state,
     } = req.body;
     let user = null;
     user = await userModel.findOne({ phoneNumber }).lean().exec();
@@ -40,6 +42,7 @@ export const createUser = async (
       fname: firstName,
       lname: lastName,
       gender,
+      ...(state && { state }),
     });
     if (newUser) {
       const newWallet = await walletModel.create({
@@ -105,6 +108,36 @@ export const loginUser = async (
         token,
         data: rest,
       });
+    }
+  } catch (error) {
+    return next({
+      message: "Login failed",
+      error: error,
+    });
+  }
+};
+
+export const updateFullName = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { firstName, lastName } = req.body;
+    const { userId }: IAuthModel = req.userData!;
+    const newUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...(firstName && { fname: firstName }),
+          ...(lastName && { lname: lastName }),
+        },
+      },
+      { new: true }
+    );
+    if (newUser) {
+      const { password: p, ...rest } = newUser.toObject();
+      res.status(200).json(rest);
     }
   } catch (error) {
     return next({
