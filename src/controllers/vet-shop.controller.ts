@@ -99,3 +99,19 @@ export const createVetShopsFromExcel = async (
     }
   );
 };
+
+export const getVetShops = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const shops = await shopModel.find({}).lean();
+    res.status(200).json(shops);
+  } catch (error) {
+    next({
+      message: "saving vetshops failed",
+      error,
+    });
+  }
+};

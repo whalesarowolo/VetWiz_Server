@@ -4,6 +4,7 @@ import userModel from "../models/user/user";
 import { newToken } from "./../utils/auth";
 import walletModel from "./../models/wallet/wallet";
 import { IAuthModel } from "../utils/auth.d";
+import { hash } from "bcrypt";
 
 export const createUser = async (
   req: Request,
@@ -88,14 +89,14 @@ export const loginUser = async (
     }
     if (!user) {
       res.status(401).json({
-        message: "Invalid credentials",
+        message: "Wrong username or password",
       });
     }
     if (user) {
       const match = await user.checkPassword(password!);
       if (!match) {
         res.status(401).json({
-          message: "Invalid credentials",
+          message: "Wrong username or password",
         });
       }
     }
@@ -143,6 +144,52 @@ export const updateFullName = async (
     return next({
       message: "Login failed",
       error: error,
+    });
+  }
+};
+
+export const updatePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId }: IAuthModel = req.userData!;
+    const { newPassword } = req.body;
+    hash(newPassword, 9, (err, hash) => {
+      if (err) {
+        return next({
+          message: "Generating encryption failed",
+          error: err,
+        });
+      }
+
+      const password = hash;
+      userModel.findByIdAndUpdate(
+        userId,
+        {
+          $set: { password },
+        },
+        { new: true },
+        async (error, user) => {
+          if (error) {
+            return next({
+              message: "Updating user password failed",
+              error,
+            });
+          }
+          if (user) {
+            res.status(201).json({
+              message: "Your password is updated, Please login again.",
+            });
+          }
+        }
+      );
+    });
+  } catch (error) {
+    return next({
+      message: "Updating Password failed",
+      error,
     });
   }
 };
