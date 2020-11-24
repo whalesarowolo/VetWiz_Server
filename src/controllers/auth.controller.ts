@@ -19,6 +19,7 @@ export const createUser = async (
       phoneNumber,
       password,
       occupation,
+      category,
       firstName,
       lastName,
       gender,
@@ -46,6 +47,7 @@ export const createUser = async (
       lname: lastName,
       gender,
       ...(state && { state }),
+      ...(category && { bizCategory: category }),
     });
     if (newUser) {
       const newWallet = await walletModel.create({
