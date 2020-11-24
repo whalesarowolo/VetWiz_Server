@@ -6,6 +6,7 @@ import {
   loginUser,
   updateFullName,
   updatePassword,
+  forgotPassword,
 } from "./../controllers/auth.controller";
 import { topUpUser, topUpVerify } from "./../controllers/topup.controller";
 import {
@@ -45,6 +46,7 @@ router.post("/login", loginUser);
 router.patch("/user/update", <any>auth, updateUserDetails);
 router.patch("/user/update-name", <any>auth, updateFullName);
 router.patch("/user/reset-password", <any>auth, updatePassword);
+router.post("/user/forgot-password", forgotPassword);
 // router.post("/user/batch-vets", createNVRIUsers);
 
 //Topup Routes
