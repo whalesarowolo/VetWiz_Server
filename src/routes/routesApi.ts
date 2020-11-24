@@ -22,7 +22,7 @@ import {
 } from "../controllers/forum.controller";
 import {
   updateUserDetails,
-  // createNVRIUsers,
+  createNVRIUsers,
 } from "../controllers/user.controller";
 import { getWalletBalance } from "../controllers/wallet.controller";
 import { getArticles, getNews } from "../controllers/article.controller";
@@ -47,7 +47,7 @@ router.patch("/user/update", <any>auth, updateUserDetails);
 router.patch("/user/update-name", <any>auth, updateFullName);
 router.patch("/user/reset-password", <any>auth, updatePassword);
 router.post("/user/forgot-password", forgotPassword);
-// router.post("/user/batch-vets", createNVRIUsers);
+router.post("/user/batch-vets", createNVRIUsers);
 
 //Topup Routes
 router.post("/paystack/topup", <any>auth, topUpUser);
