@@ -18,18 +18,22 @@ export const updateUserDetails = async (
       crops = [],
     } = req.body;
     const { userId } = req.userData!;
-    const newUser = await userModel.findByIdAndUpdate(userId, {
-      $set: {
-        ...(company && { company }),
-        ...(dob && { dob }),
-        ...(state && { state }),
-        ...(lga && { lga }),
-        ...(lat && { lat }),
-        ...(long && { long }),
-        ...(userRole.length > 0 && { userRole }),
-        ...(crops.length > 0 && { crops }),
+    const newUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...(company && { company }),
+          ...(dob && { dob }),
+          ...(state && { state }),
+          ...(lga && { lga }),
+          ...(lat && { lat }),
+          ...(long && { long }),
+          ...(userRole.length > 0 && { userRole }),
+          ...(crops.length > 0 && { crops }),
+        },
       },
-    });
+      { new: true, upsert: true, select: "-password" }
+    );
     res.status(201).json(newUser);
   } catch (error) {
     next({
@@ -38,3 +42,25 @@ export const updateUserDetails = async (
     });
   }
 };
+
+// export const createNVRIUsers = async (req: any, res: any) => {
+//   try {
+//     for (const user of users) {
+//       await userModel
+//         .create({
+//           email: user?.email ?? "",
+//           userRole: ["user", "vet"],
+//           password: user?.password ?? "",
+//           phoneNumber: user?.phone ?? "",
+//           createdAt: user.date.$date,
+//           bizCategory: user.role,
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//         });
+//     }
+//     await res.send("Saved");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

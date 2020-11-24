@@ -7,6 +7,7 @@ import "dotenv/config";
 import { IUserModel } from "./models/user/user.d";
 import { IAuthModel } from "./utils/auth.d";
 import morgan from "morgan";
+import * as Sentry from "@sentry/node";
 
 declare global {
   namespace Express {
@@ -45,6 +46,10 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
+Sentry.init({
+  dsn: "https://8011920eb693416baa7c96f196c4f3f8@sentry.io/5170539",
+});
+
 app.set("view engine", "ejs");
 app.use(json({ limit: "50mb" }));
 app.use(urlencoded({ limit: "50mb", extended: true }));
@@ -65,6 +70,28 @@ app.use("/api/v1", route);
 
 // eslint-disable-next-line import/no-unresolved
 // require("./utils/modelCreator")
+
+app.use(
+  (
+    serverError: { error: Error; message?: string },
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    Sentry.configureScope((scope: any) => {
+      scope.setTag("user", req?.userData ?? "");
+      scope.setUser({
+        email: req.userData && req.userData.email ? req.userData.email : "",
+        phone: req?.userData?.phoneNumber ?? "",
+      });
+    });
+
+    Sentry.captureException(serverError.error);
+    res.status(500).json({
+      message: serverError.message,
+    });
+  }
+);
 
 const PORT = process.env.PORT || 8000;
 // eslint-disable-next-line no-console
