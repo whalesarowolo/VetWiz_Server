@@ -4,6 +4,7 @@ import { IAuthModel } from "../utils/auth.d";
 import { readFileSync, fstat, unlinkSync } from "fs";
 import shopModel from "../models/vet-shop/shop";
 import { IShop } from "../models/vet-shop/shop.d";
+import userModel from "../models/user/user";
 
 const getLocationFromString = (locationUrl: string, type: string): string => {
   return (
@@ -107,6 +108,53 @@ export const getVetShops = async (
 ): Promise<void> => {
   try {
     const shops = await shopModel.find({}).lean();
+    res.status(200).json(shops);
+  } catch (error) {
+    next({
+      message: "saving vetshops failed",
+      error,
+    });
+  }
+};
+
+export const getMyStateVetShops = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId }: IAuthModel = req.userData!;
+    const user = await userModel.findById(userId);
+    const shops = await shopModel
+      .find({
+        ...(user?.state
+          ? { state: { $regex: user?.state, $options: "i" } }
+          : {}),
+      })
+      .lean();
+    res.status(200).json(shops);
+  } catch (error) {
+    next({
+      message: "saving vetshops failed",
+      error,
+    });
+  }
+};
+
+export const getStateVetShopsFromUrl = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { state } = req.query as any;
+    const shops = await shopModel
+      .find({
+        ...(state
+          ? { state: { $regex: state, $options: "i" } }
+          : {}),
+      })
+      .lean();
     res.status(200).json(shops);
   } catch (error) {
     next({
