@@ -6,6 +6,7 @@ import shopModel from "../models/vet-shop/shop";
 import { IShop } from "../models/vet-shop/shop.d";
 import userModel from "../models/user/user";
 import { getNauticalDistance } from "../utils/helpers";
+import { UploadedFile } from "express-fileupload";
 
 const getLocationFromString = (locationUrl: string, type: string): string => {
   return (
@@ -25,11 +26,11 @@ export const createVetShopsFromExcel = async (
   if (userRole.includes("admin")) {
     res.status(403).json({ message: "Only Admins can upload Bulk Users" });
   }
-  let excelFile = req.files?.file;
+  let excelFile = req.files?.file as UploadedFile;
   if (!excelFile) res.status(404).json({ message: "File not found" });
   excelFile?.mv(
     `${__dirname}-vetwiz-vetshop`,
-    async (err): Promise<void> => {
+    async (err: Error): Promise<void> => {
       if (err) {
         next({
           message: "Generating Details from excel failed",

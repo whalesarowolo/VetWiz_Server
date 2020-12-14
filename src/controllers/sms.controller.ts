@@ -98,7 +98,7 @@ export const sendMessage = async (
         return;
       }
       const allPhones: string[] = receivers
-        .map((obj) => obj.phoneNumber ?? "")
+        .map((obj: any): string => obj.phoneNumber ?? "")
         .filter(Boolean);
       // const phoneNums = allPhones.join(",");
       // const results = await https.get(
