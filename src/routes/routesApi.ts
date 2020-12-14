@@ -33,6 +33,8 @@ import {
 import {
   createVetShopsFromExcel,
   getStateVetShopsFromUrl,
+  getMyStateVetShops,
+  getProximityVetShops,
 } from "../controllers/vet-shop.controller";
 import { saveAnimalDiseaseDiagnosis } from "./../controllers/diagnosis.controller";
 import { saveEmergency } from "../controllers/emergency.controller";
@@ -81,8 +83,9 @@ router.get("/wallet/get", <any>auth, getWalletBalance);
 // Vet Shops
 router.get("/vet-shops", <any>auth, getVetShops);
 router.post("/vet-shop/create-batch", <any>auth, createVetShopsFromExcel);
-router.post("/vet-shop/my-state-vetshops", <any>auth, getVetShops);
+router.get("/vet-shop/my-state-vetshops", <any>auth, getMyStateVetShops);
 router.post("/vet-shop/state-vetshops", <any>auth, getStateVetShopsFromUrl);
+router.get("/vet-shops/proximity", <any>auth, getProximityVetShops);
 
 // Diagnosis routes
 router.post("/diagnosis/save-results", <any>auth, saveAnimalDiseaseDiagnosis);

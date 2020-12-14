@@ -5,6 +5,7 @@ import { readFileSync, fstat, unlinkSync } from "fs";
 import shopModel from "../models/vet-shop/shop";
 import { IShop } from "../models/vet-shop/shop.d";
 import userModel from "../models/user/user";
+import { getNauticalDistance } from "../utils/helpers";
 
 const getLocationFromString = (locationUrl: string, type: string): string => {
   return (
@@ -57,6 +58,10 @@ export const createVetShopsFromExcel = async (
             L: "other",
             M: "nvirRegistered",
             N: "interStateSales",
+            O: "vcn",
+            P: "city",
+            Q: "lga",
+            R: "state",
           },
         });
         unlinkSync(`${__dirname}-vetwiz-vetshop`);
@@ -68,8 +73,12 @@ export const createVetShopsFromExcel = async (
               onboardDate: shop.onboardDate,
               name: shop.name,
               address: shop.address,
-              lat: getLocationFromString(shop?.location, "mlat"),
-              long: getLocationFromString(shop?.location, "mlon"),
+              lat: Number(
+                getLocationFromString(shop?.location, "mlat")
+              ).toFixed(6),
+              long: Number(
+                getLocationFromString(shop?.location, "mlon")
+              ).toFixed(6),
               contactPhone: shop.contactPhone,
               shopAge: shop?.shopAge,
               cacRegistered: shop?.cacRegistered === "yes",
@@ -80,16 +89,22 @@ export const createVetShopsFromExcel = async (
               drugs: shop?.drugs == "1",
               accessories: shop?.accessories == "1",
               other: shop?.other == "1",
+              vcn: shop?.vcn == "yes",
+              lga: shop?.lga ?? "",
+              state: shop?.state ?? "",
             })
             .catch((error) => {
               errorArray.push(shop);
             });
         }
-        if (!!errorArray.length)
+        if (!!errorArray.length) {
           await res.status(201).json({
             message: "Vetshops created except the following",
             data: errorArray,
           });
+          return;
+        }
+
         await res.status(201).json({ message: "Vet shops saved" });
       } catch (error) {
         return next({
@@ -128,9 +143,49 @@ export const getMyStateVetShops = async (
     const shops = await shopModel
       .find({
         ...(user?.state
-          ? { state: { $regex: user?.state, $options: "i" } }
+          ? { state: { $regex: user?.state?.split(" ")[0], $options: "i" } }
           : {}),
       })
+      .lean();
+    res.status(200).json(shops);
+  } catch (error) {
+    next({
+      message: "saving vetshops failed",
+      error,
+    });
+  }
+};
+
+export const getProximityVetShops = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId }: IAuthModel = req.userData!;
+    const { long, lat, distance } = req.query as any;
+    const shops = await shopModel
+      .find(
+        {
+          $and: [
+            {
+              lat: {
+                $lte: Number(lat) + Number(getNauticalDistance(distance)),
+                $gte: Number(lat) - Number(getNauticalDistance(distance)),
+              },
+            },
+            {
+              long: {
+                $lte: Number(long) + Number(getNauticalDistance(distance)),
+                $gte: Number(long) - Number(getNauticalDistance(distance)),
+              },
+            },
+          ],
+        }
+        // ...(user?.state
+        //   ? { state: { $regex: user?.state?.split(" ")[0], $options: "i" } }
+        //   : {}),
+      )
       .lean();
     res.status(200).json(shops);
   } catch (error) {
@@ -150,9 +205,7 @@ export const getStateVetShopsFromUrl = async (
     const { state } = req.query as any;
     const shops = await shopModel
       .find({
-        ...(state
-          ? { state: { $regex: state, $options: "i" } }
-          : {}),
+        ...(state ? { state: { $regex: state, $options: "i" } } : {}),
       })
       .lean();
     res.status(200).json(shops);

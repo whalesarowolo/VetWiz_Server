@@ -12,8 +12,8 @@ export const ShopSchema: Schema = new Schema(
       default: "",
     },
     onboardDate: String,
-    long: String,
-    lat: String,
+    long: Number,
+    lat: Number,
     contactPhone: String,
     shopAge: String,
     cacRegistered: Boolean,
@@ -24,6 +24,9 @@ export const ShopSchema: Schema = new Schema(
     drugs: Boolean,
     accessories: Boolean,
     other: Boolean,
+    vcn: Boolean,
+    lga: String,
+    state: String,
   },
   { timestamps: true }
 );

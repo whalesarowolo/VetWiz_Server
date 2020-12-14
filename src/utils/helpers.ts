@@ -16,3 +16,7 @@ export const generateTxRef = (passwordLength: number): string => {
 };
 
 export const SMS_CHARGE = 5;
+
+export const getNauticalDistance = (distance: number) => {
+  return Number(distance) / 111;
+};

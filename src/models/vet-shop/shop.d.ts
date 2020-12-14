@@ -4,8 +4,8 @@ export interface IShop extends Document {
   name: string;
   address: string;
   onboardDate?: string;
-  long?: string;
-  lat?: string;
+  long?: number;
+  lat?: number;
   contactPhone: string;
   shopAge?: string;
   cacRegistered?: boolean;
@@ -16,4 +16,7 @@ export interface IShop extends Document {
   drugs?: boolean;
   accessories?: boolean;
   other?: boolean;
+  vcn?: boolean;
+  state?: string;
+  lga?: string;
 }
