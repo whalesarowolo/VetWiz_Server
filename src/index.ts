@@ -43,7 +43,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+  app.use(morgan("dev") as any);
 }
 
 Sentry.init({
@@ -57,7 +57,7 @@ app.use(
   cors({
     origin: "*",
     optionsSuccessStatus: 200,
-  })
+  }) as any
 );
 
 app.get("/", (req, res) =>
