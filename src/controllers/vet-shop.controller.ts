@@ -7,6 +7,8 @@ import { IShop } from "../models/vet-shop/shop.d";
 import userModel from "../models/user/user";
 import { getNauticalDistance } from "../utils/helpers";
 import { UploadedFile } from "express-fileupload";
+import { hash } from "bcrypt";
+import { IUser } from "../models/user/user.d";
 
 const getLocationFromString = (locationUrl: string, type: string): string => {
   return (
@@ -210,6 +212,76 @@ export const getStateVetShopsFromUrl = async (
       })
       .lean();
     res.status(200).json(shops);
+  } catch (error) {
+    next({
+      message: "saving vetshops failed",
+      error,
+    });
+  }
+};
+
+export const createUserFromVetshop = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { shops } = req.body;
+    let createdUsers: IUser[] = [];
+    const shopReps = shops.map((shop: IShop): {
+      phoneNumber: string;
+      shopId: string;
+    } => {
+      return {
+        phoneNumber: shop.contactPhone,
+        shopId: shop._id,
+      };
+    });
+
+    shopReps.forEach(async (rep: { phoneNumber: string; shopId: string }) => {
+      try {
+        const encryptedPassword = await hash("vetwiz", 9);
+        const createdUser = await userModel.findOneAndUpdate(
+          { phoneNumber: { $regex: rep.phoneNumber, $options: "i" } },
+          {
+            $set: {
+              userRole: ["user", "shopRep"],
+              phoneNumber: rep.phoneNumber,
+              shop: rep.shopId,
+              password: encryptedPassword,
+            },
+          },
+          {
+            upsert: true,
+            new: true,
+          }
+        );
+        createdUsers.push(createdUser);
+      } catch (error) {}
+    });
+    res.status(201).json(createdUsers);
+  } catch (error) {
+    next({
+      message: "saving vetshops failed",
+      error,
+    });
+  }
+};
+
+export const getUserShop = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId }: IAuthModel = req.userData!;
+    const user = await userModel.findById(userId);
+    if (user && user.shop) {
+      const shop = shopModel.findById(user.shop);
+      res.status(200).json(shop);
+    } else {
+      res.status(404).json({ message: "Shop not found" });
+    }
   } catch (error) {
     next({
       message: "saving vetshops failed",

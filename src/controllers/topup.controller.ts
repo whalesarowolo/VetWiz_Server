@@ -156,7 +156,7 @@ export const topUpVerify = async (
                   .lean();
                 if (updatedWallet) {
                   res.redirect(
-                    "https://www.farmaid.net/complete_topup_transaction.html"
+                    "https://www.vetwiz.app/complete_topup_transaction.html"
                   );
                 }
               } else {
@@ -168,7 +168,7 @@ export const topUpVerify = async (
                   });
                   if (newWallet) {
                     res.redirect(
-                      "https://www.farmaid.net/complete_topup_transaction.html"
+                      "https://www.vetwiz.app/complete_topup_transaction.html"
                     );
                   }
                 } catch (error) {

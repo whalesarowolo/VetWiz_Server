@@ -180,7 +180,7 @@ export const forgotPassword = async (
       });
 
       let mailOptions = {
-        from: "no-reply@farmaidproject.com",
+        from: "no-reply@vetwiz.ap",
         to: `${user.email}`,
         subject: "Link To Reset Password",
         text: `

@@ -84,7 +84,7 @@ router.get("/wallet/get", <any>auth, getWalletBalance);
 router.get("/vet-shops", <any>auth, getVetShops);
 router.post("/vet-shop/create-batch", <any>auth, createVetShopsFromExcel);
 router.get("/vet-shop/my-state-vetshops", <any>auth, getMyStateVetShops);
-router.post("/vet-shop/state-vetshops", <any>auth, getStateVetShopsFromUrl);
+router.get("/vet-shop/state-vetshops", <any>auth, getStateVetShopsFromUrl);
 router.get("/vet-shops/proximity", <any>auth, getProximityVetShops);
 
 // Diagnosis routes

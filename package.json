@@ -1,7 +1,7 @@
 {
-  "name": "farmaid-server",
+  "name": "vetwiz-server",
   "version": "1.0.0",
-  "description": "Server for the FarmAid Mobile Application. Written in JS",
+  "description": "Server for the Vetwiz Mobile Application. Written in Typescript",
   "main": "index.js",
   "scripts": {
     "test": "test",
@@ -9,7 +9,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc -p ."
   },
-  "author": "Ogaga",
+  "author": "Andy Ogaga",
   "license": "ISC",
   "dependencies": {
     "@sentry/node": "^5.27.6",

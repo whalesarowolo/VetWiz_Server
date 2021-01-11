@@ -14,6 +14,7 @@ export interface IUser extends Document {
   dateOfBirth?: string;
   state?: string;
   lga?: string;
+  shop?: string;
   community?: string;
   disability?: string;
   maritalStatus?: string;

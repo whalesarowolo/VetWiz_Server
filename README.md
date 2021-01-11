@@ -1,4 +1,4 @@
-# farmaid-server
+# Vetwiz-server
 
 ### Installation
 * First intsall node and npm. Get installation instructions from https://nodejs.org/

@@ -62,7 +62,7 @@ app.use(
 
 app.get("/", (req, res) =>
   res.json({
-    message: "Welcome to the FarmAid Server Apis",
+    message: "Welcome to the Vetwiz Server Apis",
   })
 );
 app.use("/api/v1", route);
@@ -95,4 +95,4 @@ app.use(
 
 const PORT = process.env.PORT || 8000;
 // eslint-disable-next-line no-console
-app.listen(PORT, () => console.log(`FarmAid Server listening on port ${PORT}`));
+app.listen(PORT, () => console.log(`Vetwiz Server listening on port ${PORT}`));
