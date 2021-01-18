@@ -17,7 +17,7 @@ UserSchema.pre<IUserModel>("save", function (next) {
 });
 
 UserSchema.methods.checkPassword = function (password: string) {
-  const passwordHash = this.password;
+  const passwordHash = (<any>this).password
   return new Promise((resolve, reject) => {
     compare(password, passwordHash, (err: Error, same: boolean): void => {
       if (err) {
