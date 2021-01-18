@@ -36,7 +36,7 @@ mongoose.connect(process.env.MONGODB_URI!, {
 
 const app: Application = express();
 
-mongoose.Promise = global.Promise;
+(<any>mongoose).Promise = global.Promise;
 mongoose.connection.on("error", (err) => {
   // eslint-disable-next-line no-console
   console.error(`Database error ${err.message}`);

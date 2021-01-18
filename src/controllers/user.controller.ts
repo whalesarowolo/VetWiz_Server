@@ -32,7 +32,7 @@ export const updateUserDetails = async (
           ...(crops.length > 0 && { crops }),
         },
       },
-      { new: true, upsert: true, select: "-password" }
+      { new: true, upsert: true }
     );
     res.status(201).json(newUser);
   } catch (error) {
