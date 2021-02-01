@@ -22,7 +22,8 @@ import {
 } from "../controllers/forum.controller";
 import {
   updateUserDetails,
-  // createNVRIUsers,
+  updateUserProfile,
+  updateUserAvatar,
 } from "../controllers/user.controller";
 import { getWalletBalance } from "../controllers/wallet.controller";
 import { getArticles, getNews } from "../controllers/article.controller";
@@ -43,13 +44,15 @@ import { saveFeedback } from "../controllers/feedback.controller";
 
 const router = express.Router();
 
-router.use(fileUpload());
+router.use(fileUpload({ safeFileNames: true }));
 
 //User Routes
 router.post("/register", createUser);
 router.post("/login", loginUser);
 router.patch("/user/update", <any>auth, updateUserDetails);
+router.patch("/user/update-profile", <any>auth, updateUserProfile);
 router.patch("/user/update-name", <any>auth, updateFullName);
+router.post("/user/save-user-avatar", <any>auth, updateUserAvatar);
 router.patch("/user/reset-password", <any>auth, updatePassword);
 router.post("/user/forgot-password", forgotPassword);
 // router.post("/user/batch-vets", createNVRIUsers);

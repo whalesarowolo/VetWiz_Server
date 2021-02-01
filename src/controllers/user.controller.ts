@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import userModel from "../models/user/user";
+import { UploadedFile } from "express-fileupload";
+import { uploadFile } from "../utils/uploader";
 
 export const updateUserDetails = async (
   req: Request,
@@ -30,6 +32,75 @@ export const updateUserDetails = async (
           ...(long && { long }),
           ...(userRole.length > 0 && { userRole }),
           ...(crops.length > 0 && { crops }),
+        },
+      },
+      { new: true, upsert: true }
+    );
+    res.status(201).json(newUser);
+  } catch (error) {
+    next({
+      message: "User update failed",
+      error,
+    });
+  }
+};
+
+export const updateUserAvatar = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.userData!;
+    console.log(req.files);
+    let avatar = req.files?.file as UploadedFile;
+    const cloudinaryResponse: any = await uploadFile(avatar, "image", "avatar");
+
+    const newUser = await userModel.findByIdAndUpdate(userId, {
+      $set: {
+        avatar: cloudinaryResponse.secure_url,
+      },
+    });
+
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.log(error);
+    next({
+      message: "User avatar update failed",
+      error,
+    });
+  }
+};
+
+export const updateUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const {
+      firstName,
+      lastName,
+      gender,
+      email,
+      phoneNumber,
+      category,
+      state = "",
+      lga = "",
+    } = req.body;
+    const { userId } = req.userData!;
+    const newUser = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...(firstName && { fname: firstName }),
+          ...(lastName && { lname: lastName }),
+          ...(email && { email }),
+          ...(phoneNumber && { phoneNumber }),
+          ...(gender && { gender }),
+          ...(category && { bizCategory: category }),
+          ...(state && { state }),
+          ...(lga && { lga }),
         },
       },
       { new: true, upsert: true }

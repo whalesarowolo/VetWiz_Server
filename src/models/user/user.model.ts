@@ -23,6 +23,9 @@ export const UserSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+    },
     phoneNumber: {
       type: String,
     },
