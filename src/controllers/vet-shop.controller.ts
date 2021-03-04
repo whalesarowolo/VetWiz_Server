@@ -15,7 +15,7 @@ const getLocationFromString = (locationUrl: string, type: string): string => {
     locationUrl
       ?.split("?")[1]
       ?.split("=")
-      [type === "mlat" ? 1 : 2]?.split("&")[0] ?? ""
+    [type === "mlat" ? 1 : 2]?.split("&")[0] ?? ""
   );
 };
 
@@ -226,29 +226,42 @@ export const createUserFromVetshop = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { shops } = req.body;
-    let createdUsers: IUser[] = [];
-    const shopReps = shops.map((shop: IShop): {
+    const shops = await shopModel.find({}).lean()
+    const shopReps = shops.map((shop): {
       phoneNumber: string;
       shopId: string;
+      state: string;
+      lga: string
+      createdAt: string
     } => {
       return {
         phoneNumber: shop.contactPhone,
         shopId: shop._id,
+        state: shop?.state ?? '',
+        lga: shop?.lga ?? '',
+        createdAt: shop?.createdAt ?? ''
       };
     });
-
-    shopReps.forEach(async (rep: { phoneNumber: string; shopId: string }) => {
+    const createdUsers = await shopReps.map(async (rep: { phoneNumber: string; shopId: string; state: string; lga: string; createdAt: string }) => {
       try {
         const encryptedPassword = await hash("vetwiz", 9);
         const createdUser = await userModel.findOneAndUpdate(
           { phoneNumber: { $regex: rep.phoneNumber, $options: "i" } },
           {
             $set: {
+              fname: '',
+              lname: '',
               userRole: ["user", "shopRep"],
               phoneNumber: rep.phoneNumber,
+              state: `${rep.state} State`,
+              lga: rep.lga,
               shop: rep.shopId,
               password: encryptedPassword,
+              createdAt: rep.createdAt,
+              active: true,
+              crops: [],
+              animals: [],
+              bizCategory: 'Veterinary Shop'
             },
           },
           {
@@ -256,10 +269,10 @@ export const createUserFromVetshop = async (
             new: true,
           }
         );
-        createdUsers.push(createdUser);
-      } catch (error) {}
+        return await createdUser
+      } catch (error) { }
     });
-    res.status(201).json(createdUsers);
+    await res.status(201).json(createdUsers);
   } catch (error) {
     next({
       message: "saving vetshops failed",

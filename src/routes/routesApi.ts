@@ -36,6 +36,7 @@ import {
   getStateVetShopsFromUrl,
   getMyStateVetShops,
   getProximityVetShops,
+  createUserFromVetshop,
 } from "../controllers/vet-shop.controller";
 import { saveAnimalDiseaseDiagnosis } from "./../controllers/diagnosis.controller";
 import { saveEmergency } from "../controllers/emergency.controller";
@@ -56,6 +57,7 @@ router.post("/user/save-user-avatar", <any>auth, updateUserAvatar);
 router.patch("/user/reset-password", <any>auth, updatePassword);
 router.post("/user/forgot-password", forgotPassword);
 // router.post("/user/batch-vets", createNVRIUsers);
+// router.post('/user/shops', createUserFromVetshop)
 
 //Topup Routes
 router.post("/paystack/topup", <any>auth, topUpUser);

@@ -19,4 +19,5 @@ export interface IShop extends Document {
   vcn?: boolean;
   state?: string;
   lga?: string;
+  createdAt?: string
 }
