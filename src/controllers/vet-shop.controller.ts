@@ -119,6 +119,47 @@ export const createVetShopsFromExcel = async (
   );
 };
 
+export const createVetShop = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    console.log(req.body)
+    const { contactPhone, name, address, lat, long, shopAge, cacRegistered, nvirRegistered, interStateSales, animalFeed, vaccine, drugs, accessories, other, vcn, lga, state } = req.body;
+    await shopModel
+      .findOneAndUpdate({ contactPhone },
+        {
+          $set: {
+            onboardDate: new Date().toString(),
+            name,
+            contactPhone,
+            address,
+            lat: lat || 0,
+            long: long || 0,
+            shopAge: shopAge,
+            cacRegistered,
+            nvirRegistered,
+            interStateSales,
+            animalFeed,
+            vaccine,
+            drugs,
+            accessories,
+            other,
+            vcn,
+            lga: lga || '',
+            state: state || '',
+          }
+        }, { upsert: true, new: true });
+    await res.status(201).json({ message: "Shop created" })
+  } catch (error) {
+    next({
+      message: "Creating vetshop failed",
+      error,
+    });
+  }
+}
+
 export const getVetShops = async (
   req: Request,
   res: Response,
@@ -208,7 +249,7 @@ export const getStateVetShopsFromUrl = async (
     const { state } = req.query as any;
     const shops = await shopModel
       .find({
-        ...(state ? { state: { $regex: state, $options: "i" } } : {}),
+        ...(state ? { state: { $regex: state.split(' ')[0], $options: "i" } } : {}),
       })
       .lean();
     res.status(200).json(shops);

@@ -16,7 +16,7 @@ export const UserSchema: Schema = new Schema(
     userRole: {
       type: [String],
       required: true,
-      enum: ["user", "shopRep"],
+      enum: ["user", "shopRep", "vet"],
       default: ["user"],
     },
     password: {

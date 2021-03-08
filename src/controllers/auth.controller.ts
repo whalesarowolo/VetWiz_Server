@@ -69,6 +69,7 @@ export const createUser = async (
       }
     }
   } catch (err) {
+    console.log(err)
     return next({
       message: "Registration failed",
       error: err,
