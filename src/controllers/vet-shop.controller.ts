@@ -125,7 +125,6 @@ export const createVetShop = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    console.log(req.body)
     const { contactPhone, name, address, lat, long, shopAge, cacRegistered, nvirRegistered, interStateSales, animalFeed, vaccine, drugs, accessories, other, vcn, lga, state } = req.body;
     await shopModel
       .findOneAndUpdate({ contactPhone },
@@ -135,8 +134,8 @@ export const createVetShop = async (
             name,
             contactPhone,
             address,
-            lat: lat || 0,
-            long: long || 0,
+            ...(!!lat && { lat }),
+            ...(!!long && { long }),
             shopAge: shopAge,
             cacRegistered,
             nvirRegistered,

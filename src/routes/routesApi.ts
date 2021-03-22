@@ -43,6 +43,7 @@ import { saveAnimalDiseaseDiagnosis } from "./../controllers/diagnosis.controlle
 import { saveEmergency } from "../controllers/emergency.controller";
 import { getVetShops } from "../controllers/vet-shop.controller";
 import { saveFeedback } from "../controllers/feedback.controller";
+import { saveUserLocationAndAction } from "../controllers/location.controller";
 
 const router = express.Router();
 
@@ -102,5 +103,8 @@ router.post("/emergency/save-emergency", <any>auth, saveEmergency);
 
 // Feedback routes
 router.post("/feedback/save", <any>auth, saveFeedback);
+
+// Location routes
+router.post('/location/save-location', <any>auth, saveUserLocationAndAction)
 
 export default router;
