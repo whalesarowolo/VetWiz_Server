@@ -23,6 +23,7 @@ declare global {
       JWT_SECRET: string;
       NODE_ENV: string;
       BASE_URL: string;
+      SENDGRID_API_SECRET: string;
     }
   }
 }

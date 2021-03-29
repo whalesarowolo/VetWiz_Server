@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { IAuthModel } from "../utils/auth.d";
 import feedbackModel from "../models/feedback/feedback";
+import { sendMail } from "../services/mailingServices/mail"
 
 export const saveFeedback = async (
   req: Request,
@@ -20,6 +21,13 @@ export const saveFeedback = async (
       media: [],
     });
     if (newFeedback) {
+      sendMail({
+        to: email,
+        from: 'andy.ogaga@gmail.com',
+        subject: 'Feedback',
+        text: '',
+        html: ''
+      }, res, next)
       return res.status(201).json(newFeedback);
     }
   } catch (error) {
