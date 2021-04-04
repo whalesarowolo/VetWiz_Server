@@ -12,7 +12,7 @@ export const LocationSchema: Schema = new Schema(
     userPhone: {
       type: String
     },
-    LocationSchema: {
+    lat: {
       type: String
     },
     long: {
