@@ -22,11 +22,16 @@ export const saveFeedback = async (
     });
     if (newFeedback) {
       sendMail({
-        to: email,
+        to: 'oigbokwe@farmnovation.com, oolaniyan@farmnovation.com, mukam@farmnovation.com, andy.ogaga@farmnovation.com',
         from: 'andy.ogaga@gmail.com',
-        subject: 'Feedback',
+        subject: 'Feedback from Vetwiz App',
         text: '',
-        html: ''
+        html: `<h3>${type}</h3>
+          <p>${email}</p>
+          <p>${phoneNumber}</p>
+          <p>${title}</p>   
+          <p>${message}</p> 
+        `
       }, res, next)
       return res.status(201).json(newFeedback);
     }
