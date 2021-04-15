@@ -3,7 +3,7 @@ const sendSmsHelper = (
   password: string,
   sender: string,
   recipient: string
-) => {};
+) => { };
 
 export const generateTxRef = (passwordLength: number): string => {
   let pass = "";
@@ -18,5 +18,5 @@ export const generateTxRef = (passwordLength: number): string => {
 export const SMS_CHARGE = 5;
 
 export const getNauticalDistance = (distance: number) => {
-  return Number(distance) / 111;
+  return Number(distance) / 110;
 };
