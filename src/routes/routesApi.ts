@@ -52,6 +52,7 @@ router.use(fileUpload({ safeFileNames: true }));
 //User Routes
 router.post("/register", createUser);
 router.post("/login", loginUser);
+router.post("/user/profile/me", <any>auth, )
 router.patch("/user/update", <any>auth, updateUserDetails);
 router.patch("/user/update-profile", <any>auth, updateUserProfile);
 router.patch("/user/update-name", <any>auth, updateFullName);

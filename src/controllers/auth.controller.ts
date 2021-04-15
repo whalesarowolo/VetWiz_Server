@@ -153,6 +153,23 @@ export const updateFullName = async (
   }
 };
 
+export const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId }: IAuthModel = req.userData!;
+    const newUser = await userModel.findById(userId)
+    res.status(200).json(newUser)
+  } catch (err) {
+    next({
+      message: "Error checking user",
+      error: err,
+    });
+  }
+};
+
 export const forgotPassword = async (
   req: Request,
   res: Response,
