@@ -7,6 +7,7 @@ import {
   updateFullName,
   updatePassword,
   forgotPassword,
+  getUserProfile,
 } from "./../controllers/auth.controller";
 import { topUpUser, topUpVerify } from "./../controllers/topup.controller";
 import {
@@ -52,7 +53,7 @@ router.use(fileUpload({ safeFileNames: true }));
 //User Routes
 router.post("/register", createUser);
 router.post("/login", loginUser);
-router.post("/user/profile/me", <any>auth, )
+router.get("/user/profile/me", <any>auth, getUserProfile)
 router.patch("/user/update", <any>auth, updateUserDetails);
 router.patch("/user/update-profile", <any>auth, updateUserProfile);
 router.patch("/user/update-name", <any>auth, updateFullName);
