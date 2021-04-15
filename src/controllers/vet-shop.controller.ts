@@ -245,10 +245,11 @@ export const getStateVetShopsFromUrl = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { state } = req.query as any;
+    const { state, certification } = req.query as any;
     const shops = await shopModel
       .find({
         ...(state ? { state: { $regex: state.split(' ')[0], $options: "i" } } : {}),
+        ...(certification ? { [certification]: true } : {})
       })
       .lean();
     res.status(200).json(shops);
