@@ -3,6 +3,8 @@ import { Document } from "mongoose";
 export interface IShop extends Document {
   name: string;
   address: string;
+  email?: string;
+  position?: string;
   onboardDate?: string;
   long?: number;
   lat?: number;

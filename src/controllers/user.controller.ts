@@ -52,7 +52,6 @@ export const updateUserAvatar = async (
 ): Promise<void> => {
   try {
     const { userId } = req.userData!;
-    console.log(req.files);
     let avatar = req.files?.file as UploadedFile;
     const cloudinaryResponse: any = await uploadFile(avatar, "image", "avatar");
 

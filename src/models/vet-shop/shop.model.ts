@@ -27,6 +27,8 @@ export const ShopSchema: Schema = new Schema(
     vcn: Boolean,
     lga: String,
     state: String,
+    position: String,
+    email: String
   },
   { timestamps: true }
 );

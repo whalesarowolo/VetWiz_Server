@@ -49,22 +49,22 @@ export const createVetShopsFromExcel = async (
           columnToKey: {
             A: "onboardDate",
             B: "name",
-            C: "address",
-            D: "location",
-            E: "contactPhone",
-            F: "shopAge",
-            G: "cacRegistered",
-            H: "animalFeed",
-            I: "vaccine",
-            J: "drugs",
-            K: "accessories",
-            L: "other",
-            M: "nvirRegistered",
-            N: "interStateSales",
-            O: "vcn",
-            P: "city",
-            Q: "lga",
-            R: "state",
+            C: "email",
+            D: "state",
+            E: "lga",
+            F: "location",
+            G: "contactPhone",
+            H: "position",
+            I: "shopAge",
+            J: "cacRegistered",
+            K: "vcn",
+            L: "animalFeed",
+            M: 'drugs',
+            N: "vaccine",
+            O: "accessories",
+            P: "other",
+            Q: "nvirRegistered",
+            R: "interStateSales",
           },
         });
         unlinkSync(`${__dirname}-vetwiz-vetshop`);
@@ -74,8 +74,8 @@ export const createVetShopsFromExcel = async (
           await shopModel
             .create({
               onboardDate: shop.onboardDate,
-              name: shop.name,
-              address: shop.address,
+              name: shop.name || `${shop?.lga || ''}, ${shop?.state || ''} Vet Services`,
+              address: shop.address || `${shop?.lga || ''}, ${shop?.state || ''}`,
               lat: Number(
                 getLocationFromString(shop?.location, "mlat")
               ).toFixed(6),
@@ -86,7 +86,7 @@ export const createVetShopsFromExcel = async (
               shopAge: shop?.shopAge,
               cacRegistered: shop?.cacRegistered === "yes",
               nvirRegistered: shop?.nvirRegistered == "yes",
-              interStateSales: shop?.interStateSales == "outside_state",
+              interStateSales: shop?.interStateSales == "Outside",
               animalFeed: shop?.animalFeed == "1",
               vaccine: shop?.vaccine == "1",
               drugs: shop?.drugs == "1",
@@ -97,6 +97,7 @@ export const createVetShopsFromExcel = async (
               state: shop?.state ?? "",
             })
             .catch((error) => {
+              console.log(error)
               errorArray.push(shop);
             });
         }
