@@ -22,8 +22,8 @@ export const saveFeedback = async (
     });
     if (newFeedback) {
       sendMail({
-        to: 'oigbokwe@farmnovation.com, oolaniyan@farmnovation.com, mukam@farmnovation.com, andy.ogaga@farmnovation.com',
-        from: 'andy.ogaga@gmail.com',
+        to: 'info@vetwiz.app, info@farmnovation.com, noseji@farmnovation.com, aogaga@farmnovation.com',
+        from: 'info@vetwiz.app',
         subject: 'Feedback from Vetwiz App',
         text: '',
         html: `<h3>${type}</h3>
