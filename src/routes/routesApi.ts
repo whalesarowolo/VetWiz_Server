@@ -1,5 +1,6 @@
 import express from "express";
 import fileUpload from "express-fileupload";
+import multer from 'multer'
 import { auth } from "./../utils/auth";
 import {
   createUser,
@@ -48,7 +49,7 @@ import { saveUserLocationAndAction } from "../controllers/location.controller";
 
 const router = express.Router();
 
-router.use(fileUpload({ safeFileNames: true }));
+router.use(fileUpload());
 
 //User Routes
 router.post("/register", createUser);

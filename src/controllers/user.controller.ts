@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import userModel from "../models/user/user";
 import { UploadedFile } from "express-fileupload";
 import { uploadFile } from "../utils/uploader";
+import "dotenv/config";
 
 export const updateUserDetails = async (
   req: Request,
@@ -52,18 +53,17 @@ export const updateUserAvatar = async (
 ): Promise<void> => {
   try {
     const { userId } = req.userData!;
+
     let avatar = req.files?.file as UploadedFile;
     const cloudinaryResponse: any = await uploadFile(avatar, "image", "avatar");
-
     const newUser = await userModel.findByIdAndUpdate(userId, {
       $set: {
         avatar: cloudinaryResponse.secure_url,
       },
     });
 
-    res.status(201).json(newUser);
+    await res.status(201).json(newUser);
   } catch (error) {
-    console.log(error);
     next({
       message: "User avatar update failed",
       error,

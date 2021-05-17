@@ -1,9 +1,11 @@
-const cloudinary = require("cloudinary").v2;
+
 import fs from "fs";
+import "dotenv/config";
 const { v4: uuidv4 } = require("uuid");
+const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
+  cloud_name: 'farm-innovation',
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 })

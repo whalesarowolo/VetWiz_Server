@@ -1,8 +1,9 @@
 import SendGridMail from "@sendgrid/mail";
 import { MailDataRequired } from "@sendgrid/helpers/classes/mail";
 import { NextFunction, Response } from "express";
+import "dotenv/config";
 
-SendGridMail.setApiKey(process.env.SENDGRID_API!);
+SendGridMail.setApiKey(process.env.SENDGRID_API_SECRET!);
 export const sendMail = async (
   msg: MailDataRequired,
   res: Response,

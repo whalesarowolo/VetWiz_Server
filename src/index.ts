@@ -13,7 +13,6 @@ declare global {
   namespace Express {
     interface Request {
       userData?: IAuthModel;
-      file?: any
     }
   }
 
@@ -25,6 +24,9 @@ declare global {
       NODE_ENV: string;
       BASE_URL: string;
       SENDGRID_API_SECRET: string;
+      CLOUDINARY_NAME: string;
+      CLOUDINARY_API_KEY: string;
+      CLOUDINARY_SECRET: string;
     }
   }
 }
