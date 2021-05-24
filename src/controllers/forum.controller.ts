@@ -3,6 +3,8 @@ import forumModel from './../models/forum/forum';
 import { IForum } from './../models/forum/forum.d';
 import userModel from '../models/user/user';
 import { IAuthModel } from './../utils/auth.d';
+import { UploadedFile } from 'express-fileupload';
+import { uploadFile } from '../utils/uploader';
 
 export const addForumPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -72,12 +74,12 @@ export const addForumPost = async (req: Request, res: Response, next: NextFuncti
 
 export const getNewsPosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const allPosts = await forumModel.find({postType: "news"})
-    .sort(-1)
-    .limit(14)
-    .lean()
-    .exec()
-    if(allPosts) {
+    const allPosts = await forumModel.find({ postType: "news" })
+      .sort(-1)
+      .limit(14)
+      .lean()
+      .exec()
+    if (allPosts) {
       res.status(200).json({
         message: "Successful",
         data: allPosts
@@ -87,7 +89,7 @@ export const getNewsPosts = async (req: Request, res: Response, next: NextFuncti
     res.status(404).send({
       message: "No News posts found"
     })
-    
+
   } catch (error) {
     next({
       message: "Error fetching post",
@@ -98,12 +100,12 @@ export const getNewsPosts = async (req: Request, res: Response, next: NextFuncti
 
 export const getAdvertsPosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const allPosts = await forumModel.find({postType: "adverts"})
-    .sort(-1)
-    .limit(14)
-    .lean()
-    .exec()
-    if(allPosts) {
+    const allPosts = await forumModel.find({ postType: "adverts" })
+      .sort(-1)
+      .limit(14)
+      .lean()
+      .exec()
+    if (allPosts) {
       res.status(200).json({
         message: "Successful",
         data: allPosts
@@ -113,7 +115,7 @@ export const getAdvertsPosts = async (req: Request, res: Response, next: NextFun
     res.status(404).send({
       message: "No Adverts found"
     })
-    
+
   } catch (error) {
     next({
       message: "Error fetching post",
@@ -124,12 +126,12 @@ export const getAdvertsPosts = async (req: Request, res: Response, next: NextFun
 
 export const getCommunityPosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const allPosts = await forumModel.find({postType: "community"})
-    .sort(-1)
-    .limit(14)
-    .lean()
-    .exec()
-    if(allPosts) {
+    const allPosts = await forumModel.find({ postType: "community" })
+      .sort(-1)
+      .limit(14)
+      .lean()
+      .exec()
+    if (allPosts) {
       res.status(200).json({
         message: "Successful",
         data: allPosts
@@ -139,7 +141,7 @@ export const getCommunityPosts = async (req: Request, res: Response, next: NextF
     res.status(404).send({
       message: "No Community posts found"
     })
-    
+
   } catch (error) {
     next({
       message: "Error fetching post",
@@ -148,12 +150,20 @@ export const getCommunityPosts = async (req: Request, res: Response, next: NextF
   }
 }
 
-// export const deleteForumPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const 
-//   } catch (error) {
-//     next({
-//       message: "Could not delete post"
-//     })
-//   }
-// }
+export const saveTopicImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { email } = req.userData!;
+
+    let avatar = req.files?.file as UploadedFile;
+    const cloudinaryResponse: any = await uploadFile(avatar, "image", `forum/${email}`);
+    await res.status(201).json({
+      message: 'Image uploaded',
+      imageUrl: cloudinaryResponse.secure_url
+    });
+  } catch (error) {
+    console.log(error)
+    next({
+      message: "Could not upload image"
+    })
+  }
+}

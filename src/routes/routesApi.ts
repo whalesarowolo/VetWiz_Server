@@ -21,6 +21,7 @@ import {
   getAdvertsPosts,
   getCommunityPosts,
   getNewsPosts,
+  saveTopicImage,
 } from "../controllers/forum.controller";
 import {
   updateUserDetails,
@@ -78,6 +79,7 @@ router.post("/forum/add", <any>auth, addForumPost);
 router.get("/forum/get/news", <any>auth, getNewsPosts);
 router.get("/forum/get/ads", <any>auth, getAdvertsPosts);
 router.get("/forum/get/community", <any>auth, getCommunityPosts);
+router.post("/forum/save-topic-image", <any>auth, saveTopicImage)
 
 //Articles routes
 router.get("/articles/tags", <any>auth, getNews);
@@ -109,5 +111,8 @@ router.post("/feedback/save", <any>auth, saveFeedback);
 
 // Location routes
 router.post('/location/save-location', <any>auth, saveUserLocationAndAction)
+
+// Admin routes
+
 
 export default router;
