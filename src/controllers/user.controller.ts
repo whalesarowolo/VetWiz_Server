@@ -3,6 +3,7 @@ import userModel from "../models/user/user";
 import { UploadedFile } from "express-fileupload";
 import { uploadFile } from "../utils/uploader";
 import "dotenv/config";
+import { isUserAdmin } from "../utils/helpers";
 
 export const updateUserDetails = async (
   req: Request,
@@ -134,3 +135,42 @@ export const updateUserProfile = async (
 //     console.log(error);
 //   }
 // };
+
+
+export const getUsersCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const allUsersCount = await userModel.find({ userRole: { $nin: ['admin'] } }).count()
+    await res.status(200).json({ data: allUsersCount });
+  } catch (error) {
+    next({
+      message: "Error getting users count",
+      error,
+    });
+  }
+};
+
+export const getUserRoleCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userId } = req.userData!;
+    const { role } = req.query as any
+    const isAdmin = isUserAdmin({ _id: userId }, next)
+    if (!isAdmin) {
+      res.status(403).json({ message: 'You are not an admin' });
+    }
+    const allUsersCount = await userModel.find({ bizCategory: role || '' }).count()
+    await res.status(200).json({ data: allUsersCount });
+  } catch (error) {
+    next({
+      message: "Error getting users count",
+      error,
+    });
+  }
+};

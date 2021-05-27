@@ -33,9 +33,26 @@ export const saveAnimalDiseaseDiagnosis = (
       res.status(200).json(response);
     })
     .catch((error) => {
-      return next({
+      next({
         message: "Error Saving the Diagnosis result",
         error,
       });
     });
+};
+
+
+export const getDiseaseDiagnosisCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const diagnosisCount = await diagnosisModel.find({}).count()
+    await res.status(200).json({ data: diagnosisCount });
+  } catch (error) {
+    next({
+      message: "Error getting diagnosis count",
+      error,
+    });
+  }
 };

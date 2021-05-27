@@ -5,7 +5,7 @@ import { readFileSync, fstat, unlinkSync } from "fs";
 import shopModel from "../models/vet-shop/shop";
 import { IShop } from "../models/vet-shop/shop.d";
 import userModel from "../models/user/user";
-import { getNauticalDistance } from "../utils/helpers";
+import { getNauticalDistance, isUserAdmin } from "../utils/helpers";
 import { UploadedFile } from "express-fileupload";
 import { hash } from "bcrypt";
 import { IUser } from "../models/user/user.d";
@@ -340,6 +340,28 @@ export const getUserShop = async (
   } catch (error) {
     next({
       message: "saving vetshops failed",
+      error,
+    });
+  }
+};
+
+export const getVetshopsCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userId } = req.userData!;
+    const { role } = req.query as any
+    const isAdmin = isUserAdmin({ _id: userId }, next)
+    if (!isAdmin) {
+      res.status(403).json({ message: 'You are not an admin' });
+    }
+    const allShopCount = await shopModel.find({}).count()
+    await res.status(200).json({ data: allShopCount });
+  } catch (error) {
+    next({
+      message: "Error getting shops count",
       error,
     });
   }
