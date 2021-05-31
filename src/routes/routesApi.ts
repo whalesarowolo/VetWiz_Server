@@ -19,6 +19,7 @@ import {
 import {
   addForumPost,
   getAdvertsPosts,
+  getAllTopics,
   getCommunityPosts,
   getNewsPosts,
   saveTopicImage,
@@ -50,6 +51,7 @@ import { saveEmergency } from "../controllers/emergency.controller";
 import { getVetShops } from "../controllers/vet-shop.controller";
 import { saveFeedback } from "../controllers/feedback.controller";
 import { saveUserLocationAndAction } from "../controllers/location.controller";
+import { getAllUsers } from "../controllers/admin.controller";
 
 const router = express.Router();
 
@@ -120,6 +122,7 @@ router.post("/feedback/save", <any>auth, saveFeedback);
 router.post('/location/save-location', <any>auth, saveUserLocationAndAction)
 
 // Admin routes
-
+router.get("/admin/users", <any>auth, getAllUsers)  // Query = {page: number | undefined; limit: number | undefined}
+router.get("/admin/topics", <any>auth, getAllTopics)  // Query = {page: number | undefined; limit: number | undefined}
 
 export default router;

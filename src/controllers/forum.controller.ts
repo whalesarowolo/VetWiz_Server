@@ -5,6 +5,8 @@ import userModel from '../models/user/user';
 import { IAuthModel } from './../utils/auth.d';
 import { UploadedFile } from 'express-fileupload';
 import { uploadFile } from '../utils/uploader';
+import { isUserAdmin } from '../utils/helpers';
+import { getFirebaseSnapshot } from '../utils/firebase';
 
 export const addForumPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -167,3 +169,25 @@ export const saveTopicImage = async (req: Request, res: Response, next: NextFunc
     })
   }
 }
+
+export const getAllTopics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { userId }: IAuthModel = req.userData!
+    const { page, limit } = req.query as any
+    const isAdmin = await isUserAdmin({ _id: userId }, next)
+    if (!isAdmin) {
+      res.status(403).json({ message: "Only Admins can access this resource" })
+      return
+    }
+
+    const topics = await getFirebaseSnapshot('/topics')
+    await res.status(200).json(topics ? Object.values(topics.val()) : [])
+  } catch (error) {
+    console.log(error)
+    next({
+      message: "Failed to get all topics",
+      err: error
+    })
+  }
+}
+

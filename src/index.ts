@@ -21,7 +21,7 @@ declare global {
       MONGODB_URI: string;
       PAYSTACK_SK: string;
       JWT_SECRET: string;
-      NODE_ENV: string;
+      NODE_ENV: 'development' | 'production';
       BASE_URL: string;
       SENDGRID_API_SECRET: string;
       CLOUDINARY_NAME: string;
