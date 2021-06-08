@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { IAuthModel } from "../utils/auth.d";
 import diagnosisModel from "../models/diagnosis/diagnosis";
 import { IDiagnosis } from "../models/diagnosis/diagnosis.d";
+import { ILocation } from "../models/location/location.d";
+import locationModel from "../models/location/location";
 
 export const saveAnimalDiseaseDiagnosis = (
   req: Request,
@@ -16,16 +18,34 @@ export const saveAnimalDiseaseDiagnosis = (
         keywordsSearched: string[];
         animal: string;
         diseasesFound: string[];
+        location: {
+          action: string;
+          lat: string;
+          long: string;
+          timeTaken: string;
+        } | undefined
       }): Promise<IDiagnosis> => {
-        const diagnosis = new diagnosisModel({
+        let userLocation: ILocation = null as unknown as ILocation
+        if (details.location) {
+          userLocation = await locationModel.create({
+            userId,
+            userEmail: email,
+            userPhone: phoneNumber,
+            lat: details.location.lat,
+            long: details.location.long,
+            action: details.location.action,
+            timeTaken: details.location.timeTaken,
+          })
+        }
+        return await diagnosisModel.create({
           userId,
           userEmail: email,
           userPhone: phoneNumber,
           keywordsSearched: details.keywordsSearched,
           animal: details.animal,
           diseasesFound: details.diseasesFound,
+          ...(userLocation && { location: userLocation?._id })
         });
-        return await diagnosis.save();
       }
     )
   )

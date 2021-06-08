@@ -21,19 +21,19 @@ export const saveFeedback = async (
       media: [],
     });
     if (newFeedback) {
-      sendMail({
-        to: 'info@vetwiz.app, info@farmnovation.com, noseji@farmnovation.com, aogaga@farmnovation.com',
-        from: 'info@vetwiz.app',
+      await sendMail({
+        to: 'help@vetwiz.app, info@vetwiz.app, info@farmnovation.com, noseji@farmnovation.com, aogaga@farmnovation.com',
+        from: 'help@vetwiz.app',
         subject: 'Feedback from Vetwiz App',
         text: '',
-        html: `<h3>${type}</h3>
+        html: `<body><h3>${type}</h3>
           <p>${email}</p>
           <p>${phoneNumber}</p>
           <p>${title}</p>   
-          <p>${message}</p> 
+          <p>${message}</p> </body>
         `
-      }, res, next)
-      return res.status(201).json(newFeedback);
+      }, next)
+      await res.status(201).json(newFeedback);
     }
   } catch (error) {
     return next({

@@ -11,7 +11,7 @@ cloudinary.config({
 })
 
 export const uploadFile = (file: any, resourceType: any, fileCategory: any) =>
-  new Promise((resolve, reject) => {
+  new Promise<{ [key: string]: string }>((resolve, reject) => {
     const newFilename = uuidv4();
     file.mv(`${__dirname}/${newFilename}-${file.name}`, (err: Error) => {
       if (err) {

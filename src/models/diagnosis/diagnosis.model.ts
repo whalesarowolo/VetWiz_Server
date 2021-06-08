@@ -21,6 +21,10 @@ export const DiseaseSchema: Schema = new Schema(
     animal: {
       type: String
     },
+    location: {
+      type: Schema.Types.ObjectId,
+      ref: 'location'
+    },
   },
   { timestamps: true }
 );
