@@ -12,7 +12,7 @@ const serviceAccount = {
 }
 
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount[process.env.NODE_ENV]?.location),
+  credential: firebaseAdmin.credential.cert(serviceAccount[process.env.NODE_ENV].location),
   databaseURL: serviceAccount[process.env.NODE_ENV].databaseURL
 });
 
