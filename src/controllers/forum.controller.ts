@@ -13,7 +13,7 @@ export const addForumPost = async (req: Request, res: Response, next: NextFuncti
     const { postTitle, postDescription, postType, postPic, postCategory }: IForum = req.body
     const { userId }: IAuthModel = req.userData!
     if ((postType === "news") || (postType === "adverts")) {
-      const author = await userModel.findOne({ userId }).lean().exec()
+      const author = await userModel.findOne({ userId }).lean()
       if (author) {
         const { userRole } = author
         if (userRole.includes('admin')) {
