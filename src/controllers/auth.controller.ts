@@ -177,14 +177,14 @@ export const forgotPassword = async (
 ): Promise<void> => {
   try {
     const { email } = req.body;
-    let user = await userModel.findOne({ email });
+    let user = await userModel.findOne({ email }, "-password").lean();
     if (!user) {
       res.status(404).json({
         message:
           "Please ensure you have the correct email and try again in 3 minutes",
       });
     } else {
-      const token = sign({ user: user._id }, process.env.JWT_SECRET, {
+      const token = sign({ user}, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
 
