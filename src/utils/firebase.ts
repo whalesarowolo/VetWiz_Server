@@ -1,4 +1,5 @@
 import firebaseAdmin from 'firebase-admin'
+import { IPushNotification } from './auth.d';
 
 const serviceAccount = {
   "development": {
@@ -27,3 +28,9 @@ export const removeFirebaseDocument = async (eventPath: string) => {
 export const getFirebaseSnapshot = async (eventPath: string) => {
   return firebaseAdmin.database().ref(eventPath).once("value");
 };
+
+export const sendPushNotification = async (message: IPushNotification) => {
+  await firebaseAdmin.messaging().send(message).then((resp) => {
+    console.log('message sent')
+  })
+}
