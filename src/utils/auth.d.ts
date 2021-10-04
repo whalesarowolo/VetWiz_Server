@@ -11,13 +11,18 @@ export interface IAuthModel extends Request {
   fname: IUserModel[];
 }
 
-export interface IPushNotification {
-  notification: {
+interface Notification {
     title?: string;
     body?: string;
     imageUrl?: string;
+}
+export interface IPushNotification {
+  notification: Notification;
+  android?: {
+    notification?: Notification;
+    priority?: ('high' | 'normal');
   };
-  topic: any;
+  topic: string;
 }
 // export interface IAuth extends Request {
 //   userData: IUserModel

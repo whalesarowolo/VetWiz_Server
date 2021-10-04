@@ -207,15 +207,22 @@ export const notifyUsersOfAdminPost = (
   try {
     const { userRole } = req.userData!;
     const { title, content } = req.body;
-    let message = {
+    let message : IPushNotification = {
       notification: {
         title: title,
         body: content.slice(0, 50) + "...",
       },
-      topic: "notify",
+      android: {
+        notification: {
+          title: title,
+          body: content.slice(0, 50) + "...",
+        },
+        priority: "high",
+      },
+      topic: 'notify',
     };
     if (userRole.includes("admin")) {
-      sendPushNotification(message);
+      sendPushNotification(message, res);
     }
   } catch (error) {
     console.log(error);
