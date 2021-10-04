@@ -23,6 +23,7 @@ import {
   getCommunityPosts,
   getNewsPosts,
   saveTopicImage,
+  notifyUsersOfAdminPost,
 } from "../controllers/forum.controller";
 import {
   updateUserDetails,
@@ -88,6 +89,7 @@ router.post("/forum/add", <any>auth, addForumPost);
 router.get("/forum/get/news", <any>auth, getNewsPosts);
 router.get("/forum/get/ads", <any>auth, getAdvertsPosts);
 router.get("/forum/get/community", <any>auth, getCommunityPosts);
+router.post('/forum/notify', <any>auth, notifyUsersOfAdminPost);
 router.post("/forum/save-topic-image", <any>auth, saveTopicImage)
 
 //Articles routes
