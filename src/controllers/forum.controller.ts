@@ -210,12 +210,12 @@ export const notifyUsersOfAdminPost = (
     let message : IPushNotification = {
       notification: {
         title: title,
-        body: content.slice(0, 50) + "...",
+        body: content,
       },
       android: {
         notification: {
           title: title,
-          body: content.slice(0, 50) + "...",
+          body: content,
         },
         priority: "high",
       },
