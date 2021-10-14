@@ -1,6 +1,5 @@
 import express from "express";
 import fileUpload from "express-fileupload";
-import multer from 'multer'
 import { auth } from "./../utils/auth";
 import {
   createUser,
@@ -9,6 +8,7 @@ import {
   updatePassword,
   forgotPassword,
   getUserProfile,
+  renderResetPassword,
 } from "./../controllers/auth.controller";
 import { topUpUser, topUpVerify } from "./../controllers/topup.controller";
 import {
@@ -66,11 +66,13 @@ router.patch("/user/update-profile", <any>auth, updateUserProfile);
 router.patch("/user/update-name", <any>auth, updateFullName);
 router.post("/user/save-user-avatar", <any>auth, updateUserAvatar);
 router.patch("/user/reset-password", <any>auth, updatePassword);
+router.get("/user/reset-password-view", renderResetPassword);
 router.post("/user/forgot-password", forgotPassword);
 router.get("/user/get-count", <any>auth, getUsersCount);
 router.get("/user/get-role-count", <any>auth, getUserRoleCount); // ?role=Paravet
 // router.post("/user/batch-vets", createNVRIUsers);
 // router.post('/user/shops', createUserFromVetshop)
+
 
 //Topup Routes
 // router.post("/paystack/topup", <any>auth, topUpUser);
