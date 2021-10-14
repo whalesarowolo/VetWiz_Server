@@ -11,9 +11,11 @@ import { getFirebaseSnapshot } from '../utils/firebase';
 export const addForumPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { postTitle, postDescription, postType, postPic, postCategory }: IForum = req.body
-    const { userId, userRole }: IAuthModel = req.userData!
+    const { userId }: IAuthModel = req.userData!
     if ((postType === "news") || (postType === "adverts")) {
-      if (userRole.length > 0) {
+      const author = await userModel.findOne({ userId }).lean().exec()
+      if (author) {
+        const { userRole } = author
         if (userRole.includes('admin')) {
           const newPost = await forumModel.create({
             postTitle,
