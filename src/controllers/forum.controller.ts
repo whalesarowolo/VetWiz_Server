@@ -6,7 +6,8 @@ import { IAuthModel, IPushNotification } from "./../utils/auth.d";
 import { UploadedFile } from "express-fileupload";
 import { uploadFile } from "../utils/uploader";
 import { isUserAdmin } from "../utils/helpers";
-import { getFirebaseSnapshot, sendPushNotification } from "../utils/firebase";
+import { addForumTopic, getFirebaseSnapshot, sendPushNotification } from "../utils/firebase";
+import { UserRoles } from "../models/user/user.d";
 
 export const addForumPost = async (
   req: Request,
@@ -256,3 +257,25 @@ export const getAllTopics = async (
     });
   }
 };
+
+export const createForumTopic = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userRole, userId }: IAuthModel = req.userData!;
+    const {title, description, imageUrl } = req.body;
+    if(userRole.includes(UserRoles.admin)) {
+      const newTopicRef = await addForumTopic()
+      const newTopic = {
+        title,
+        description,
+        authorId: userId,
+        authorFullname: 'Admin',
+        status: 'approved',
+        ...(imageUrl && {imageUrl}),
+        topicId: newTopicRef?.key
+      }
+      newTopicRef?.set(newTopic)
+    }
+  } catch (error) {
+    
+  }
+}

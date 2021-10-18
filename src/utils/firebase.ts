@@ -51,6 +51,12 @@ export const sendPushNotification = (
     .catch((err) => console.log(err));
 };
 
-export const subscribeToTopic = (topic: string, ) => {
-  
-}
+export const subscribeToTopic = (topic: string) => {};
+
+export const addForumTopic = async () => {
+  try {
+    return await firebaseAdmin.database().ref("topics").push();
+  } catch (error) {
+    console.log(error);
+  }
+};
