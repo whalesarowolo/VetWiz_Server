@@ -281,7 +281,6 @@ export const createForumTopic = async (
     if (avatar) {
       cloudinaryResponse = await uploadFile(avatar, "image", `forum/${email}`);
     }
-
     const newTopicRef = await addForumTopic();
     const newTopic = {
       title,
