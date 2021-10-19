@@ -32,3 +32,8 @@ export interface IUser {
 export interface IUserModel extends IUser, Document {
   checkPassword(pass): (password: string) => Promise<boolean>;
 }
+
+export enum UserRoles {
+  admin = 'admin'
+
+}
