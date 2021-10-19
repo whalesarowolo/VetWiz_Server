@@ -15,3 +15,22 @@
 * initialize Topup: _{baseUrl}/api/v1/paystack/topup_
 * Verify topup: _{baseUrl}/api/v1/topup/verify/:reference_
 
+##### Forum Routes
+* Add Forum Topic: _{baseUrl}/api/v1/forum/web/save-topic_
+```
+const data = {
+    title: 'The Topic Title',
+    description: 'The topic description'
+}
+formData = new FormData()
+formData.append('values', JSON.stringify(data))
+formData.append('file', imageFile)
+fetch('https://vetwiz-server-alpha.herokuapp.com/api/v1/forum/web/save-topic', {
+    method: 'POST',
+    headers: {
+        'Authorization': 'Bearer append user token',
+        'ContentType': 'appliation/json',
+    },
+    body: formData
+})
+```

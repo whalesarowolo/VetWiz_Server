@@ -6,7 +6,11 @@ import { IAuthModel, IPushNotification } from "./../utils/auth.d";
 import { UploadedFile } from "express-fileupload";
 import { uploadFile } from "../utils/uploader";
 import { isUserAdmin } from "../utils/helpers";
-import { addForumTopic, getFirebaseSnapshot, sendPushNotification } from "../utils/firebase";
+import {
+  addForumTopic,
+  getFirebaseSnapshot,
+  sendPushNotification,
+} from "../utils/firebase";
 import { UserRoles } from "../models/user/user.d";
 
 export const addForumPost = async (
@@ -208,7 +212,7 @@ export const notifyUsersOfAdminPost = (
   try {
     const { userRole } = req.userData!;
     const { title, content } = req.body;
-    let message : IPushNotification = {
+    let message: IPushNotification = {
       notification: {
         title: title,
         body: content,
@@ -220,7 +224,7 @@ export const notifyUsersOfAdminPost = (
         },
         priority: "high",
       },
-      topic: 'notify',
+      topic: "notify",
     };
     if (userRole.includes("admin")) {
       sendPushNotification(message, res);
@@ -258,24 +262,44 @@ export const getAllTopics = async (
   }
 };
 
-export const createForumTopic = async (req: Request, res: Response, next: NextFunction) => {
+export const createForumTopic = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { userRole, userId }: IAuthModel = req.userData!;
-    const {title, description, imageUrl } = req.body;
-    if(userRole.includes(UserRoles.admin)) {
-      const newTopicRef = await addForumTopic()
-      const newTopic = {
-        title,
-        description,
-        authorId: userId,
-        authorFullname: 'Admin',
-        status: 'approved',
-        ...(imageUrl && {imageUrl}),
-        topicId: newTopicRef?.key
-      }
-      newTopicRef?.set(newTopic)
+    const { userId, email }: IAuthModel = req.userData!;
+    const isAdmin = await isUserAdmin({ _id: userId }, next);
+    if (!isAdmin) {
+      res.status(403).json({ message: "Only Admins can access this resource" });
+      return;
     }
+    const { values } = req.body;
+    const { title, description } = JSON.parse(values);
+    let avatar = req.files?.file as UploadedFile;
+    let cloudinaryResponse;
+    if (avatar) {
+      cloudinaryResponse = await uploadFile(avatar, "image", `forum/${email}`);
+    }
+
+    const newTopicRef = await addForumTopic();
+    const newTopic = {
+      title,
+      description,
+      authorId: userId,
+      authorFullname: "Admin",
+      status: "approved",
+      ...(cloudinaryResponse && { imageUrl: cloudinaryResponse.secure_url }),
+      topicId: newTopicRef?.key,
+    };
+    await newTopicRef?.set(newTopic);
+    await res.status(201).json({
+      message: "Topic Added",
+    });
   } catch (error) {
-    
+    next({
+      message: "Failed to create topic",
+      err: error,
+    });
   }
-}
+};
