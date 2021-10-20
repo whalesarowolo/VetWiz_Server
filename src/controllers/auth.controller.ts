@@ -81,7 +81,7 @@ export const loginUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<Response<any, Record<string, any>> | void> => {
   try {
     const { email, phoneNumber, password }: IUser = req.body;
     let user: IUserModel | null = null;
@@ -93,14 +93,14 @@ export const loginUser = async (
       });
     }
     if (!user) {
-      res.status(401).json({
+      return res.status(401).json({
         message: "Wrong username or password",
       });
     }
     if (user) {
       const match = await user.checkPassword(password!);
       if (!match) {
-        res.status(401).json({
+        return res.status(401).json({
           message: "Wrong username or password",
         });
       }
@@ -109,7 +109,7 @@ export const loginUser = async (
     if (user) {
       const token = newToken(user);
       const { password: p, ...rest } = user.toObject();
-      res.status(200).json({
+      return res.status(200).json({
         message: "Login successful",
         token,
         data: rest,
