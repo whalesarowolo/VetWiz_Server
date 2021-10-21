@@ -288,7 +288,7 @@ export const createForumTopic = async (
       authorId: userId,
       authorFullname: "Admin",
       status: "approved",
-      ...(cloudinaryResponse && { imageUrl: cloudinaryResponse.secure_url }),
+      ...(cloudinaryResponse && { imageUrl: cloudinaryResponse.secure_url, avatar: cloudinaryResponse.secure_url  }),
       topicId: newTopicRef?.key,
     };
     await newTopicRef?.set(newTopic);
