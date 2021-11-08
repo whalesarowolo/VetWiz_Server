@@ -99,3 +99,33 @@ export const createBlogTopic = async (
     });
   }
 };
+
+export const getBlogTopics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const allBlogs = await blogModel
+      .find({})
+      .sort(-1)
+      .limit(14)
+      .lean()
+      .exec();
+    if (allBlogs) {
+      res.status(200).json({
+        message: "Successful",
+        data: allBlogs,
+      });
+      return;
+    }
+    res.status(404).send({
+      message: "No Blog posts found",
+    });
+  } catch (error) {
+    next({
+      message: "Error fetching blog post",
+      err: error,
+    });
+  }
+};

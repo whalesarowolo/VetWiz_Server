@@ -27,7 +27,7 @@ import {
   createForumTopic,
 } from "../controllers/forum.controller";
 
-import { addBlogPost, createBlogTopic } from "../controllers/blog.controller";
+import { addBlogPost, createBlogTopic, getBlogTopics } from "../controllers/blog.controller";
 import {
   updateUserDetails,
   updateUserProfile,
@@ -99,6 +99,7 @@ router.post("/forum/web/save-topic", <any>auth, createForumTopic)
 // Blog routes
 router.post("/blog/add", <any>auth, addBlogPost);
 router.post("/blog/web/save-blog", <any>auth, createBlogTopic)
+router.get("/blog/get", getBlogTopics)
 
 //Articles routes
 router.get("/articles/tags", <any>auth, getNews);
