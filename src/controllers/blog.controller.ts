@@ -108,8 +108,6 @@ export const getBlogTopics = async (
   try {
     const allBlogs = await blogModel
       .find({})
-      .sort(-1)
-      .limit(14)
       .lean()
       .exec();
     if (allBlogs) {
