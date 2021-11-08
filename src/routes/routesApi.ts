@@ -26,6 +26,8 @@ import {
   notifyUsersOfAdminPost,
   createForumTopic,
 } from "../controllers/forum.controller";
+
+import { addBlogPost, createBlogTopic } from "../controllers/blog.controller";
 import {
   updateUserDetails,
   updateUserProfile,
@@ -93,6 +95,10 @@ router.get("/forum/get/community", <any>auth, getCommunityPosts);
 router.post('/forum/notify', <any>auth, notifyUsersOfAdminPost);
 router.post("/forum/save-topic-image", <any>auth, saveTopicImage)
 router.post("/forum/web/save-topic", <any>auth, createForumTopic)
+
+// Blog routes
+router.post("/blog/add", <any>auth, addBlogPost);
+router.post("/blog/web/save-blog", <any>auth, createBlogTopic)
 
 //Articles routes
 router.get("/articles/tags", <any>auth, getNews);
