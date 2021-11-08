@@ -19,7 +19,7 @@ export const addBlogPost = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { blogTitle, blogDescription }: IBlog = req.body
+    const { blogTitle, blogDescription }: IBlog = JSON.parse(req.body);
     const { userId, userRole }: IAuthModel = req.userData!
     if (userRole.length > 0) {
       if (userRole.includes('admin')) {
