@@ -60,3 +60,11 @@ export const addForumTopic = async () => {
     console.log(error);
   }
 };
+
+export const addBlogTopic = async () => {
+  try {
+    return await firebaseAdmin.database().ref("blogs").push();
+  } catch (error) {
+    console.log(error);
+  }
+};
