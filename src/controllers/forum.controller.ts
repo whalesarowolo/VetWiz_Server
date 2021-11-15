@@ -280,6 +280,7 @@ export const createForumTopic = async (
       authorId: userId,
       authorFullname: "Admin",
       status: "approved",
+      createdAt: Date.now(),
       ...(cloudinaryResponse && { imageUrl: cloudinaryResponse.secure_url, avatar: 'https://res.cloudinary.com/farm-innovation/image/upload/r_max/c_fill/v1619050667/vetwiz/farmAidLogo_byn24l.png'  }),
       topicId: newTopicRef?.key,
     };
