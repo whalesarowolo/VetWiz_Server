@@ -99,7 +99,8 @@ router.post("/forum/web/save-topic", <any>auth, createForumTopic)
 // Blog routes
 router.post("/blog/add", <any>auth, addBlogPost);
 router.post("/blog/web/save-blog", <any>auth, createBlogTopic)
-router.get("/blog/get", <any>auth, getBlogTopics)
+// router.get("/blog/get", <any>auth, getBlogTopics)
+router.get("/blog/get", getBlogTopics)
 
 //Articles routes
 router.get("/articles/tags", <any>auth, getNews);
