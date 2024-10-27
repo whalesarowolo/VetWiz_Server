@@ -42,7 +42,6 @@ const app: Application = express();
 
 (<any>mongoose).Promise = global.Promise;
 mongoose.connection.on("error", (err) => {
-  // eslint-disable-next-line no-console
   console.error(`Database error ${err.message}`);
 });
 
@@ -70,10 +69,6 @@ app.get("/", (req, res) =>
   })
 );
 app.use("/api/v1", route);
-// eslint-disable-next-line no-unused-vars
-
-// eslint-disable-next-line import/no-unresolved
-// require("./utils/modelCreator")
 
 app.use(
   (
@@ -98,5 +93,4 @@ app.use(
 );
 
 const PORT = process.env.PORT || 8000;
-// eslint-disable-next-line no-console
 app.listen(PORT, () => console.log(`Vetwiz Server listening on port ${PORT}`));
