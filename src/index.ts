@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 Sentry.init({
-  dsn: "https://8011920eb693416baa7c96f196c4f3f8@sentry.io/5170539",
+  dsn: "https://your_sentry_dsn",
 });
 
 app.set("view engine", "ejs");
