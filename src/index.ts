@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 Sentry.init({
-  dsn: "https://your_sentry_dsn",
+  dsn: "https://40225565cc647dbddbe268256db15508@o4508194642657280.ingest.de.sentry.io/4508194646851664",
 });
 
 app.set("view engine", "ejs");
@@ -63,11 +63,11 @@ app.use(
   }) as any
 );
 
-app.get("/", (req, res) =>
+app.get("/", (req: Request, res: Response) => {
   res.json({
     message: "Welcome to the Vetwiz Server Apis",
-  })
-);
+  });
+});
 app.use("/api/v1", route);
 
 app.use(
@@ -77,15 +77,15 @@ app.use(
     res: Response,
     next: NextFunction
   ) => {
-    Sentry.configureScope((scope: any) => {
-      scope.setTag("user", req?.userData ?? "");
+    Sentry.withScope((scope) => {
+      scope.setTag("user", JSON.stringify(req?.userData ?? ""));
       scope.setUser({
         email: req.userData && req.userData.email ? req.userData.email : "",
         phone: req?.userData?.phoneNumber ?? "",
       });
+      Sentry.captureException(serverError.error);
     });
 
-    Sentry.captureException(serverError.error);
     res.status(500).json({
       message: serverError.message,
     });
