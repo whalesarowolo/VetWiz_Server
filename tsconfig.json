@@ -3,8 +3,8 @@
     "target": "es6",                          // Ensure ECMAScript 2015 or higher
     "module": "commonjs",
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "./dist",                       // Output directory for transpiled files
+    "rootDir": "./src",                       // Root directory of your source files
     "esModuleInterop": true,                  // Enable esModuleInterop
     "resolveJsonModule": true,                // Enable JSON module resolution
     "strict": true,                           // Enable all strict type-checking options

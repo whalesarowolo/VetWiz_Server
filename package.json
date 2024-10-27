@@ -7,13 +7,14 @@
     "test": "test",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc -p ."
+    "build": "tsc"
   },
   "author": "Andy Ogaga",
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
     "@sentry/node": "^8.35.0",
+    "@sentry/profiling-node": "^8.35.0",
     "@types/bcrypt": "^3.0.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.7",
