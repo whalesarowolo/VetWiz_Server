@@ -5,6 +5,8 @@ import { uploadFile } from "../utils/uploader";
 import "dotenv/config";
 import { isUserAdmin } from "../utils/helpers";
 
+//update User Details
+
 export const updateUserDetails = async (
   req: Request,
   res: Response,
@@ -47,6 +49,8 @@ export const updateUserDetails = async (
   }
 };
 
+//update User Avatar
+
 export const updateUserAvatar = async (
   req: Request,
   res: Response,
@@ -71,6 +75,8 @@ export const updateUserAvatar = async (
     });
   }
 };
+
+//update user profile
 
 export const updateUserProfile = async (
   req: Request,
@@ -136,6 +142,7 @@ export const updateUserProfile = async (
 //   }
 // };
 
+// get Users Count
 
 export const getUsersCount = async (
   req: Request,
@@ -152,6 +159,8 @@ export const getUsersCount = async (
     });
   }
 };
+
+// get User Role Count
 
 export const getUserRoleCount = async (
   req: Request,
