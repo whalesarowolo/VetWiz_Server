@@ -1,17 +1,21 @@
-import { NextFunction, Response, Request } from "express";
+import { Request, Response, NextFunction } from "express";
 import locationModel from "../models/location/location";
+import { IAuthModel } from "../utils/auth.d";
 
-
-
-export const saveUserLocationAndAction = (
+/**
+ * Save user location and action details.
+ * This function processes the location details and saves them to the database.
+ */
+export const saveUserLocationAndAction = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  const { userLocation } = req.body;
-  const { userData } = req;
-  Promise.all(
-    userLocation.map(async (details: {
+): Promise<void> => {
+  try {
+    const { userLocation } = req.body;
+    const { userData } = req;
+
+    const locationPromises = userLocation.map(async (details: {
       lat: string;
       long: string;
       timeTaken: string;
@@ -27,16 +31,14 @@ export const saveUserLocationAndAction = (
         timeTaken: details.timeTaken,
       });
       return await newLocation.save();
-    })
-  )
-    .then((response) => {
-      res.status(201).json(response);
-    })
-    .catch((error) => {
-      return next({
-        message: "Error Saving user locations",
-        error,
-      });
     });
-};
 
+    const response = await Promise.all(locationPromises);
+    res.status(201).json(response);
+  } catch (error) {
+    next({
+      message: "Error Saving user locations",
+      error,
+    });
+  }
+};

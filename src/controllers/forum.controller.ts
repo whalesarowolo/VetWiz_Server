@@ -13,15 +13,19 @@ import {
 } from "../utils/firebase";
 import { UserRoles } from "../models/user/user.d";
 
+/**
+ * Add a new forum post.
+ * Only admins can post news and adverts.
+ */
 export const addForumPost = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { postTitle, postDescription, postType, postPic, postCategory }: IForum = req.body
-    const { userId, userRole }: IAuthModel = req.userData!
-    if ((postType === "news") || (postType === "adverts")) {
+    const { postTitle, postDescription, postType, postPic, postCategory }: IForum = req.body;
+    const { userId, userRole }: IAuthModel = req.userData!;
+    if (postType === "news" || postType === "adverts") {
       if (userRole.length > 0) {
         if (userRole.includes('admin')) {
           const newPost = await forumModel.create({
@@ -34,7 +38,7 @@ export const addForumPost = async (
           });
           if (newPost) {
             res.status(200).json({
-              message: "Community Post added succesfully",
+              message: "Community Post added successfully",
               data: newPost,
             });
             return;
@@ -45,7 +49,7 @@ export const addForumPost = async (
           return;
         }
         res.status(403).send({
-          message: "Only amins are allowed to post news and adverts",
+          message: "Only admins are allowed to post news and adverts",
         });
       }
       res.status(404).send({
@@ -63,7 +67,7 @@ export const addForumPost = async (
       });
       if (newPost) {
         res.status(200).json({
-          message: "Community Post added succesfully",
+          message: "Community Post added successfully",
           data: newPost,
         });
         return;
@@ -80,6 +84,9 @@ export const addForumPost = async (
   }
 };
 
+/**
+ * Get all news posts.
+ */
 export const getNewsPosts = async (
   req: Request,
   res: Response,
@@ -110,6 +117,9 @@ export const getNewsPosts = async (
   }
 };
 
+/**
+ * Get all adverts posts.
+ */
 export const getAdvertsPosts = async (
   req: Request,
   res: Response,
@@ -140,6 +150,9 @@ export const getAdvertsPosts = async (
   }
 };
 
+/**
+ * Get all community posts.
+ */
 export const getCommunityPosts = async (
   req: Request,
   res: Response,
@@ -170,6 +183,9 @@ export const getCommunityPosts = async (
   }
 };
 
+/**
+ * Save a topic image.
+ */
 export const saveTopicImage = async (
   req: Request,
   res: Response,
@@ -196,11 +212,14 @@ export const saveTopicImage = async (
   }
 };
 
-export const notifyUsersOfAdminPost = (
+/**
+ * Notify users of an admin post.
+ */
+export const notifyUsersOfAdminPost = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { userRole } = req.userData!;
     const { title, content } = req.body;
@@ -221,6 +240,8 @@ export const notifyUsersOfAdminPost = (
     if (userRole.includes("admin")) {
       sendPushNotification(message, res);
     }
+
+    res.status(200).send("Notification sent");
   } catch (error) {
     console.log(error);
     next({
@@ -229,6 +250,10 @@ export const notifyUsersOfAdminPost = (
   }
 };
 
+/**
+ * Get all forum topics.
+ * Only admins can access this resource.
+ */
 export const getAllTopics = async (
   req: Request,
   res: Response,
@@ -254,11 +279,15 @@ export const getAllTopics = async (
   }
 };
 
+/**
+ * Create a new forum topic.
+ * Only admins can access this resource.
+ */
 export const createForumTopic = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { userId, email }: IAuthModel = req.userData!;
     const isAdmin = await isUserAdmin({ _id: userId }, next);
@@ -281,7 +310,7 @@ export const createForumTopic = async (
       authorFullname: "Admin",
       status: "approved",
       createdAt: Date.now(),
-      ...(cloudinaryResponse && { imageUrl: cloudinaryResponse.secure_url, avatar: 'https://res.cloudinary.com/farm-innovation/image/upload/r_max/c_fill/v1619050667/vetwiz/farmAidLogo_byn24l.png'  }),
+      ...(cloudinaryResponse && { imageUrl: cloudinaryResponse.secure_url, avatar: 'https://res.cloudinary.com/farm-innovation/image/upload/r_max/c_fill/v1619050667/vetwiz/farmAidLogo_byn24l.png' }),
       topicId: newTopicRef?.key,
     };
     await newTopicRef?.set(newTopic);

@@ -56,24 +56,25 @@ import { getVetShops } from "../controllers/vet-shop.controller";
 import { saveFeedback } from "../controllers/feedback.controller";
 import { saveUserLocationAndAction } from "../controllers/location.controller";
 import { getAllUsers } from "../controllers/admin.controller";
+import { asyncHandler } from "../utils/asyncHandler";
 
 const router = express.Router();
 
 router.use(fileUpload());
 
-//User Routes
-router.post("/register", createUser);
-router.post("/login", loginUser);
-router.get("/user/profile/me", <any>auth, getUserProfile)
-router.patch("/user/update", <any>auth, updateUserDetails);
-router.patch("/user/update-profile", <any>auth, updateUserProfile);
-router.patch("/user/update-name", <any>auth, updateFullName);
-router.post("/user/save-user-avatar", <any>auth, updateUserAvatar);
-router.patch("/user/reset-password", <any>auth, updatePassword);
+// User Routes
+router.post("/register", asyncHandler(createUser));
+router.post("/login", asyncHandler(loginUser));
+router.get("/user/profile/me", auth as any, asyncHandler(getUserProfile));
+router.patch("/user/update", auth as any, asyncHandler(updateUserDetails));
+router.patch("/user/update-profile", auth as any, asyncHandler(updateUserProfile));
+router.patch("/user/update-name", auth as any, asyncHandler(updateFullName));
+router.post("/user/save-user-avatar", auth as any, asyncHandler(updateUserAvatar));
+router.patch("/user/reset-password", auth as any, asyncHandler(updatePassword));
 router.get("/user/reset-password-view", renderResetPassword);
 router.post("/user/forgot-password", forgotPassword);
-router.get("/user/get-count", <any>auth, getUsersCount);
-router.get("/user/get-role-count", <any>auth, getUserRoleCount); // ?role=Paravet
+router.get("/user/get-count", auth as any, asyncHandler(getUsersCount));
+router.get("/user/get-role-count", auth as any, asyncHandler(getUserRoleCount)); // ?role=Paravet
 // router.post("/user/batch-vets", createNVRIUsers);
 // router.post('/user/shops', createUserFromVetshop)
 
@@ -86,57 +87,60 @@ router.get("/user/get-role-count", <any>auth, getUserRoleCount); // ?role=Parave
 // router.post("/sms/send-for-approval", <any>auth, sendMessage);
 // router.get("/sms/history", <any>auth, getUserMessageHistory);
 // router.post("/sms/filter-recipients", <any>auth, filterSMSRecipients);
+// Forum Routes
+router.post("/forum/add", auth as any, asyncHandler(addForumPost));
+router.get("/forum/get/news", auth as any, asyncHandler(getNewsPosts));
+router.get("/forum/get/ads", auth as any, asyncHandler(getAdvertsPosts));
+router.get("/forum/get/community", auth as any, asyncHandler(getCommunityPosts));
+router.post('/forum/notify', auth as any, asyncHandler(notifyUsersOfAdminPost));
+router.post("/forum/save-topic-image", auth as any, asyncHandler(saveTopicImage));
+router.post("/forum/web/save-topic", auth as any, asyncHandler(createForumTopic));
 
-//Forum Routes
-router.post("/forum/add", <any>auth, addForumPost);
-router.get("/forum/get/news", <any>auth, getNewsPosts);
-router.get("/forum/get/ads", <any>auth, getAdvertsPosts);
-router.get("/forum/get/community", <any>auth, getCommunityPosts);
-router.post('/forum/notify', <any>auth, notifyUsersOfAdminPost);
-router.post("/forum/save-topic-image", <any>auth, saveTopicImage)
-router.post("/forum/web/save-topic", <any>auth, createForumTopic)
+/// Blog routes
+router.post("/blog/add", auth as any, asyncHandler(addBlogPost));
+router.post("/blog/web/save-blog", auth as any, asyncHandler(createBlogTopic));
+// router.get("/blog/get", auth as any, asyncHandler(getBlogTopics));
+router.get("/blog/get", asyncHandler(getBlogTopics));
 
-// Blog routes
-router.post("/blog/add", <any>auth, addBlogPost);
-router.post("/blog/web/save-blog", <any>auth, createBlogTopic)
-// router.get("/blog/get", <any>auth, getBlogTopics)
-router.get("/blog/get", getBlogTopics)
-
-//Articles routes
-router.get("/articles/tags", <any>auth, getNews);
-router.get("/articles", <any>auth, getArticles);
+// Articles routes
+router.get("/articles/tags", auth as any, asyncHandler(getNews));
+router.get("/articles", auth as any, asyncHandler(getArticles));
 
 //Disease routes
 // router.post("/diseases/batch", createDiseasesFromJson);
-router.get("/diseases", <any>auth, getDiseases);
+router.get("/diseases", auth as any, asyncHandler(getDiseases));
 
 // Wallet routes
-router.get("/wallet/get", <any>auth, getWalletBalance);
+router.get("/wallet/get", auth as any, asyncHandler(getWalletBalance));
+
+
 
 // Vet Shops
-router.get("/vet-shops", <any>auth, getVetShops);
-router.post("/vet-shop/create-batch", <any>auth, createVetShopsFromExcel);
-router.get("/vet-shop/my-state-vetshops", <any>auth, getMyStateVetShops);
-router.get("/vet-shop/state-vetshops", <any>auth, getStateVetShopsFromUrl);
-router.get("/vet-shops/proximity", <any>auth, getProximityVetShops);
-router.post("/vet-shops/create", <any>auth, createVetShop)
-router.get("/vet-shops/get-count", <any>auth, getVetshopsCount);
+router.get("/vet-shops", auth as any, asyncHandler(getVetShops));
+router.post("/vet-shop/create-batch", auth as any, asyncHandler(createVetShopsFromExcel));
+router.get("/vet-shop/my-state-vetshops", auth as any, asyncHandler(getMyStateVetShops));
+router.get("/vet-shop/state-vetshops", auth as any, asyncHandler(getStateVetShopsFromUrl));
+router.get("/vet-shops/proximity", auth as any, asyncHandler(getProximityVetShops));
+router.post("/vet-shops/create", auth as any, asyncHandler(createVetShop));
+router.get("/vet-shops/get-count", auth as any, asyncHandler(getVetshopsCount));
+
 
 // Diagnosis routes
-router.post("/diagnosis/save-results", <any>auth, saveAnimalDiseaseDiagnosis);
-router.get("/diagnosis/get-count", <any>auth, getDiseaseDiagnosisCount);
+router.post("/diagnosis/save-results", auth as any, asyncHandler(saveAnimalDiseaseDiagnosis));
+router.get("/diagnosis/get-count", auth as any, asyncHandler(getDiseaseDiagnosisCount));
 
 // Emergency routes
-router.post("/emergency/save-emergency", <any>auth, saveEmergency);
+router.post("/emergency/save-emergency", auth as any, asyncHandler(saveEmergency));
 
 // Feedback routes
-router.post("/feedback/save", <any>auth, saveFeedback);
+router.post("/feedback/save", auth as any, asyncHandler(saveFeedback));
 
 // Location routes
-router.post('/location/save-location', <any>auth, saveUserLocationAndAction)
+router.post('/location/save-location', auth as any, asyncHandler(saveUserLocationAndAction));
+
 
 // Admin routes
-router.get("/admin/users", <any>auth, getAllUsers)  // Query = {page: number | undefined; limit: number | undefined}
-router.get("/admin/topics", <any>auth, getAllTopics)  // Query = {page: number | undefined; limit: number | undefined}
+router.get("/admin/users", auth as any, asyncHandler(getAllUsers));  // Query = {page: number | undefined; limit: number | undefined}
+router.get("/admin/topics", auth as any, asyncHandler(getAllTopics));  // Query = {page: number | undefined; limit: number | undefined}
 
 export default router;
